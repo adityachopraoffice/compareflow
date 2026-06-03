@@ -1,8 +1,5 @@
 {
   "framework": "remix",
   "buildCommand": "prisma generate && remix build",
-  "installCommand": "npm install",
-  "functions": {
-    "app/entry.server.tsx": { "maxDuration": 30 }
-  }
+  "installCommand": "npm install"
 }

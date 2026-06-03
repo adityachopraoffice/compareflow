@@ -1,5 +1,5 @@
 {
   "framework": "remix",
-  "buildCommand": "prisma generate && remix build",
+  "buildCommand": "npx prisma generate && npm run build",
   "installCommand": "npm install"
 }

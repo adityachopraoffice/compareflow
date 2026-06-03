@@ -80,19 +80,19 @@ export default function Dashboard() {
                 <Text as="h2" variant="headingMd">Quick Actions</Text>
                 <InlineGrid columns={4} gap="400">
                   <div className="bento-tile" onClick={() => navigate("/app/tables/new")}>
-                    <Icon source={PlusIcon} color="success" />
+                    <Icon source={PlusIcon} tone="success" />
                     <Text as="span" fontWeight="semibold">Create New Table</Text>
                   </div>
                   <div className="bento-tile">
-                    <Icon source={ImportIcon} color="success" />
+                    <Icon source={ImportIcon} tone="success" />
                     <Text as="span" fontWeight="semibold">Import Products</Text>
                   </div>
                   <div className="bento-tile" onClick={() => navigate("/app/analytics")}>
-                    <Icon source={ChartVerticalIcon} color="success" />
+                    <Icon source={ChartVerticalIcon} tone="success" />
                     <Text as="span" fontWeight="semibold">View Analytics</Text>
                   </div>
                   <div className="bento-tile" onClick={() => navigate("/app/templates")}>
-                    <Icon source={ColorIcon} color="success" />
+                    <Icon source={ColorIcon} tone="success" />
                     <Text as="span" fontWeight="semibold">Manage Templates</Text>
                   </div>
                 </InlineGrid>

@@ -20,7 +20,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const { shop } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
+  const { shop } = session;
   const formData = await request.formData();
   
   // Basic saving logic

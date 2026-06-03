@@ -5,7 +5,8 @@ import { authenticate } from "../shopify.server";
 import db from "../db.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { shop } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
+  const { shop } = session;
   const shopRecord = await db.shop.findUnique({ where: { domain: shop } });
   return { plan: shopRecord?.plan || "Free" };
 };
@@ -33,14 +34,14 @@ export default function Billing() {
             <BlockStack gap="400">
               <Text as="h3" variant="headingMd">Starter</Text>
               <Text as="p" variant="headingXl">$9/m</Text>
-              <Button primary onClick={() => handleUpgrade("Starter")}>Upgrade</Button>
+              <Button variant="primary" onClick={() => handleUpgrade("Starter")}>Upgrade</Button>
             </BlockStack>
           </Card>
           <Card>
             <BlockStack gap="400">
               <Text as="h3" variant="headingMd">Pro</Text>
               <Text as="p" variant="headingXl">$19/m</Text>
-              <Button primary onClick={() => handleUpgrade("Pro")}>Upgrade</Button>
+              <Button variant="primary" onClick={() => handleUpgrade("Pro")}>Upgrade</Button>
             </BlockStack>
           </Card>
         </InlineGrid>

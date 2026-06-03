@@ -6,7 +6,8 @@ import { TEMPLATES } from "../lib/templates.config";
 import db from "../db.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { shop } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
+  const { shop } = session;
   const shopRecord = await db.shop.findUnique({ where: { domain: shop } });
   return { plan: shopRecord?.plan || "Free", templates: TEMPLATES };
 };

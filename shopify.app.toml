@@ -2,7 +2,7 @@
 
 client_id = "14f2c5b416cc97de1f341a5454b9c0bb"
 name = "compareflow"
-application_url = "https://compareflow-hz92viur8-aditya-chopra-s-projects.vercel.app"
+application_url = "https://compareflow-mu.vercel.app"
 embedded = true
 
 [build]
@@ -40,6 +40,6 @@ scopes = "read_products,write_products,read_themes,write_script_tags"
 
 [auth]
 redirect_urls = [ 
-  "https://compareflow-hz92viur8-aditya-chopra-s-projects.vercel.app/auth/callback",
-  "https://compareflow-hz92viur8-aditya-chopra-s-projects.vercel.app/auth/shopify/callback"
+  "https://compareflow-mu.vercel.app/auth/callback",
+  "https://compareflow-mu.vercel.app/auth/shopify/callback"
 ]

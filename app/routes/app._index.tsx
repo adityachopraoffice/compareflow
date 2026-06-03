@@ -46,54 +46,58 @@ export default function Dashboard() {
         
         {/* Row 1: Metric Cards */}
         <InlineGrid columns={4} gap="400">
-          <Card>
+          <div className="premium-card bg-gradient-1" style={{ padding: '20px' }}>
             <BlockStack gap="200">
-              <Text as="h3" variant="headingSm" tone="subdued">Total Tables</Text>
+              <Text as="h3" variant="headingSm">Total Tables</Text>
               <Text as="p" variant="headingXl">{totalTables}</Text>
             </BlockStack>
-          </Card>
-          <Card>
+          </div>
+          <div className="premium-card bg-gradient-2" style={{ padding: '20px' }}>
             <BlockStack gap="200">
-              <Text as="h3" variant="headingSm" tone="subdued">Published Tables</Text>
+              <Text as="h3" variant="headingSm">Published Tables</Text>
               <Text as="p" variant="headingXl">{publishedTables}</Text>
             </BlockStack>
-          </Card>
-          <Card>
+          </div>
+          <div className="premium-card bg-gradient-3" style={{ padding: '20px' }}>
             <BlockStack gap="200">
-              <Text as="h3" variant="headingSm" tone="subdued">Products Compared</Text>
+              <Text as="h3" variant="headingSm">Products Compared</Text>
               <Text as="p" variant="headingXl">{productsCompared}</Text>
             </BlockStack>
-          </Card>
-          <Card>
+          </div>
+          <div className="premium-card bg-pro" style={{ padding: '20px' }}>
             <BlockStack gap="200">
-              <Text as="h3" variant="headingSm" tone="subdued">Compare Clicks (30d)</Text>
+              <Text as="h3" variant="headingSm">Compare Clicks (30d)</Text>
               <Text as="p" variant="headingXl">{clicks}</Text>
             </BlockStack>
-          </Card>
+          </div>
         </InlineGrid>
 
         {/* Row 2: Quick Actions */}
         <Layout>
           <Layout.Section>
-            <Card>
+            <div className="premium-card" style={{ padding: '24px', background: '#fff' }}>
               <BlockStack gap="400">
                 <Text as="h2" variant="headingMd">Quick Actions</Text>
-                <InlineGrid columns={2} gap="400">
-                  <Button icon={PlusIcon} size="large" onClick={() => navigate("/app/tables/new")}>
-                    Create New Table
-                  </Button>
-                  <Button icon={ImportIcon} size="large">
-                    Import Products
-                  </Button>
-                  <Button icon={ChartVerticalIcon} size="large" onClick={() => navigate("/app/analytics")}>
-                    View Analytics
-                  </Button>
-                  <Button icon={ColorIcon} size="large" onClick={() => navigate("/app/templates")}>
-                    Manage Templates
-                  </Button>
+                <InlineGrid columns={4} gap="400">
+                  <div className="bento-tile" onClick={() => navigate("/app/tables/new")}>
+                    <Icon source={PlusIcon} color="success" />
+                    <Text as="span" fontWeight="semibold">Create New Table</Text>
+                  </div>
+                  <div className="bento-tile">
+                    <Icon source={ImportIcon} color="success" />
+                    <Text as="span" fontWeight="semibold">Import Products</Text>
+                  </div>
+                  <div className="bento-tile" onClick={() => navigate("/app/analytics")}>
+                    <Icon source={ChartVerticalIcon} color="success" />
+                    <Text as="span" fontWeight="semibold">View Analytics</Text>
+                  </div>
+                  <div className="bento-tile" onClick={() => navigate("/app/templates")}>
+                    <Icon source={ColorIcon} color="success" />
+                    <Text as="span" fontWeight="semibold">Manage Templates</Text>
+                  </div>
                 </InlineGrid>
               </BlockStack>
-            </Card>
+            </div>
           </Layout.Section>
         </Layout>
 

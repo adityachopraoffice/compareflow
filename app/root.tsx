@@ -5,6 +5,11 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import appStyles from "./app.css?url";
+
+export function links() {
+  return [{ rel: "stylesheet", href: appStyles }];
+}
 
 export default function App() {
   return (

@@ -1,0 +1,90 @@
+:root {
+  --premium-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  --premium-shadow-hover: 0 15px 35px rgba(0,0,0,0.1);
+  --premium-gradient-1: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  --premium-gradient-2: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+  --premium-gradient-3: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+  --premium-pro-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+/* Premium Card Overrides */
+.premium-card {
+  box-shadow: var(--premium-shadow) !important;
+  border-radius: 12px !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  border: 1px solid rgba(0,0,0,0.02) !important;
+  overflow: hidden;
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--premium-shadow-hover) !important;
+}
+
+/* Vibrant Background Classes */
+.bg-gradient-1 { background: var(--premium-gradient-1) !important; color: #fff !important; }
+.bg-gradient-2 { background: var(--premium-gradient-2) !important; color: #fff !important; }
+.bg-gradient-3 { background: var(--premium-gradient-3) !important; color: #fff !important; }
+.bg-pro { background: var(--premium-pro-gradient) !important; color: #fff !important; }
+
+.bg-gradient-1 *, .bg-gradient-2 *, .bg-gradient-3 *, .bg-pro * {
+  color: #fff !important;
+}
+
+/* Bento Tile Hover */
+.bento-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px !important;
+  border-radius: 16px !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #f4f6f8;
+  border: 1px solid transparent;
+}
+
+.bento-tile:hover {
+  background: #fff;
+  border-color: #008060;
+  box-shadow: 0 8px 24px rgba(0,128,96,0.1);
+  transform: scale(1.02);
+}
+
+.bento-tile svg {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 12px;
+  fill: #008060;
+}
+
+/* Glassmorphism for Modal */
+.Polaris-Modal-Dialog__Modal {
+  backdrop-filter: blur(10px) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2) !important;
+}
+
+/* Pro Plan specific styling */
+.pro-plan-card {
+  border: 2px solid transparent !important;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #84fab0, #8fd3f4) border-box !important;
+  position: relative;
+}
+
+.pro-plan-card::after {
+  content: 'BEST VALUE';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--premium-gradient-2);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}

@@ -32,18 +32,27 @@ export default function Templates() {
       <BlockStack gap="500">
         <InlineGrid columns={3} gap="400">
           {templates.map(template => (
-            <Card key={template.id}>
-              <BlockStack gap="400">
-                <BlockStack gap="200">
-                  <Text as="h3" variant="headingMd">{template.name} <Badge>{template.minPlan}</Badge></Text>
-                  <Text as="p" tone="subdued">{template.description}</Text>
+            <div key={template.id} className="premium-card bg-gradient-1" style={{ padding: 0, background: '#fff', color: '#000', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid #eee' }}>
+                <img 
+                  src={`/images/${template.id}.png`} 
+                  alt={`${template.name} preview`} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                />
+              </div>
+              <div style={{ padding: '20px', flex: 1 }}>
+                <BlockStack gap="400">
+                  <BlockStack gap="200">
+                    <Text as="h3" variant="headingMd">{template.name} <Badge>{template.minPlan}</Badge></Text>
+                    <Text as="p" tone="subdued">{template.description}</Text>
+                  </BlockStack>
+                  <InlineGrid columns={2} gap="200">
+                    <Button onClick={() => setPreviewTemplate(template)}>Live Preview</Button>
+                    <Button variant="primary">Apply</Button>
+                  </InlineGrid>
                 </BlockStack>
-                <InlineGrid columns={2} gap="200">
-                  <Button onClick={() => setPreviewTemplate(template)}>Live Preview</Button>
-                  <Button variant="primary">Apply</Button>
-                </InlineGrid>
-              </BlockStack>
-            </Card>
+              </div>
+            </div>
           ))}
         </InlineGrid>
       </BlockStack>

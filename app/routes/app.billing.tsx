@@ -76,7 +76,7 @@ export default function Billing() {
     <Page title="Billing & Plans">
       <BlockStack gap="500">
         <InlineGrid columns={3} gap="400">
-          <Card>
+          <div className="premium-card" style={{ padding: '24px', background: '#fff' }}>
             <BlockStack gap="400">
               <Text as="h3" variant="headingMd">Free</Text>
               <Text as="p" variant="headingXl">$0/m</Text>
@@ -92,9 +92,9 @@ export default function Billing() {
                 <Button onClick={handleDowngradeToFree}>Downgrade to Free</Button>
               )}
             </BlockStack>
-          </Card>
+          </div>
           
-          <Card>
+          <div className="premium-card" style={{ padding: '24px', background: '#fff' }}>
             <BlockStack gap="400">
               <Text as="h3" variant="headingMd">Starter</Text>
               <Text as="p" variant="headingXl">$9/m</Text>
@@ -112,9 +112,9 @@ export default function Billing() {
                 </Button>
               )}
             </BlockStack>
-          </Card>
+          </div>
 
-          <Card>
+          <div className="premium-card pro-plan-card" style={{ padding: '24px' }}>
             <BlockStack gap="400">
               <Text as="h3" variant="headingMd">Pro</Text>
               <Text as="p" variant="headingXl">$19/m</Text>
@@ -130,7 +130,7 @@ export default function Billing() {
                 <Button variant="primary" onClick={() => handleUpgrade("Pro")}>Upgrade</Button>
               )}
             </BlockStack>
-          </Card>
+          </div>
         </InlineGrid>
       </BlockStack>
     </Page>

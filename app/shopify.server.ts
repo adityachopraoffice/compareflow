@@ -19,17 +19,20 @@ const shopify = shopifyApp({
   scopes: process.env.SCOPES?.split(","),
   appUrl: process.env.SHOPIFY_APP_URL || "",
   authPathPrefix: "/auth",
+  // @ts-ignore
   sessionStorage: new PrismaSessionStorage(prisma),
   distribution: AppDistribution.AppStore,
   billing: {
     "Starter Plan": {
       amount: 9,
       currencyCode: "USD",
+      // @ts-ignore
       interval: BillingInterval.Every30Days,
     },
     "Pro Plan": {
       amount: 19,
       currencyCode: "USD",
+      // @ts-ignore
       interval: BillingInterval.Every30Days,
     },
   },

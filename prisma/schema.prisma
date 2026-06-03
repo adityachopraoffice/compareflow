@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id                  String    @id
+  shop                String
+  state               String
+  isOnline            Boolean   @default(false)
+  scope               String?
+  expires             DateTime?
+  accessToken         String
+  userId              BigInt?
+  firstName           String?
+  lastName            String?
+  email               String?
+  accountOwner        Boolean   @default(false)
+  locale              String?
+  collaborator        Boolean?  @default(false)
+  emailVerified       Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+}
+
+model Shop {
+  id            String             @id @default(cuid())
+  domain        String             @unique
+  accessToken   String?
+  plan          String             @default("Free")
+  installedAt   DateTime           @default(now())
+  tables        ComparisonTable[]
+  events        AnalyticsEvent[]
+  subscriptions Subscription[]
+}
+
+model ComparisonTable {
+  id             String                @id @default(cuid())
+  shopId         String
+  name           String
+  status         String                @default("draft") // draft, published
+  template       String                @default("Modern")
+  designConfig   String?               // JSON string
+  publishOptions String?               // JSON string
+  viewCount      Int                   @default(0)
+  clickCount     Int                   @default(0)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  shop           Shop                  @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  products       ComparisonProduct[]
+  attributes     ComparisonAttribute[]
+  events         AnalyticsEvent[]
+}
+
+model ComparisonProduct {
+  id               String          @id @default(cuid())
+  tableId          String
+  shopifyProductId String
+  position         Int             @default(0)
+
+  table            ComparisonTable @relation(fields: [tableId], references: [id], onDelete: Cascade)
+}
+
+model ComparisonAttribute {
+  id       String          @id @default(cuid())
+  tableId  String
+  key      String
+  label    String
+  enabled  Boolean         @default(true)
+  position Int             @default(0)
+  isCustom Boolean         @default(false)
+
+  table    ComparisonTable @relation(fields: [tableId], references: [id], onDelete: Cascade)
+}
+
+model AnalyticsEvent {
+  id        String           @id @default(cuid())
+  shopId    String
+  tableId   String?
+  eventType String
+  metadata  String?          // JSON string
+  createdAt DateTime         @default(now())
+
+  shop      Shop             @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  table     ComparisonTable? @relation(fields: [tableId], references: [id], onDelete: SetNull)
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  shopId      String
+  plan        String
+  status      String
+  billingId   String?  @unique
+  trialEndsAt DateTime?
+
+  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+}

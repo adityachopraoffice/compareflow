@@ -53,18 +53,27 @@ export default function Templates() {
           open={!!previewTemplate}
           onClose={closePreview}
           title={`Preview: ${previewTemplate.name}`}
-          large
+          size="large"
         >
           <Modal.Section>
             <BlockStack gap="400">
               <Text as="p">This is a simulated preview of how the <b>{previewTemplate.name}</b> template looks.</Text>
-              <Card>
+              
+              <div style={{
+                background: previewTemplate.id === 'dark' ? '#111' : '#fff',
+                color: previewTemplate.id === 'dark' ? '#fff' : '#000',
+                padding: '20px',
+                borderRadius: '8px',
+                fontFamily: previewTemplate.id === 'premium' ? 'serif' : 'inherit',
+                border: previewTemplate.id === 'minimal' ? 'none' : '1px solid #ddd'
+              }}>
                 <DataTable
                   columnContentTypes={['text', 'text', 'text', 'text']}
                   headings={['Features', 'Basic Model', 'Pro Model', 'Elite Model']}
                   rows={dummyData}
                 />
-              </Card>
+              </div>
+
             </BlockStack>
           </Modal.Section>
         </Modal>

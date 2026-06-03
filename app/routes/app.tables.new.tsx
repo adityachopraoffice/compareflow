@@ -76,8 +76,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
     
     return { success: true, tableId: table.id };
-  } catch (error) {
-    return { error: "Failed to create table" };
+  } catch (error: any) {
+    console.error("Table creation failed:", error);
+    return { error: error.message || "Failed to create table" };
   }
 };
 
@@ -149,6 +150,11 @@ export default function CreateTableWizard() {
       backAction={{ content: "Tables", onAction: () => navigate("/app/tables") }}
     >
       <BlockStack gap="500">
+        {actionData && "error" in actionData && actionData.error && (
+          <Banner tone="critical" title="Failed to save table">
+            {actionData.error}
+          </Banner>
+        )}
         <Card>
           <BlockStack gap="400">
             <InlineStack align="space-between">

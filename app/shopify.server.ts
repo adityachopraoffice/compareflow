@@ -22,12 +22,12 @@ const shopify = shopifyApp({
   sessionStorage: new PrismaSessionStorage(prisma),
   distribution: AppDistribution.AppStore,
   billing: {
-    [STARTER_PLAN]: {
+    "Starter Plan": {
       amount: 9,
       currencyCode: "USD",
       interval: BillingInterval.Every30Days,
     },
-    [PRO_PLAN]: {
+    "Pro Plan": {
       amount: 19,
       currencyCode: "USD",
       interval: BillingInterval.Every30Days,

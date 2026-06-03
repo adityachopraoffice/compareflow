@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useSubmit, useNavigate } from "@remix-run/react";
+import { useSubmit, useNavigate, useActionData } from "@remix-run/react";
 import {
   Page,
   Card,
@@ -10,6 +10,12 @@ import {
   InlineStack,
   Text,
   PageActions,
+  EmptyState,
+  List,
+  Checkbox,
+  FormLayout,
+  TextField,
+  Banner
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 import db from "../db.server";
@@ -24,34 +30,116 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const { shop } = session;
   const formData = await request.formData();
   
-  // Basic saving logic
   const shopRecord = await db.shop.findUnique({ where: { domain: shop } });
-  if (!shopRecord) return null;
+  if (!shopRecord) return { error: "Shop not found" };
 
-  const table = await db.comparisonTable.create({
-    data: {
-      shopId: shopRecord.id,
-      name: "New Comparison Table",
-      status: "published",
+  try {
+    const name = formData.get("name") as string || "New Comparison Table";
+    const selectedProducts = JSON.parse(formData.get("products") as string);
+    const selectedAttributes = JSON.parse(formData.get("attributes") as string);
+    const template = formData.get("template") as string || "modern";
+
+    const table = await db.comparisonTable.create({
+      data: {
+        shopId: shopRecord.id,
+        name,
+        template,
+        status: "published",
+        designConfig: "{}",
+        publishOptions: "{}",
+      }
+    });
+
+    // Save products
+    for (let i = 0; i < selectedProducts.length; i++) {
+      await db.comparisonProduct.create({
+        data: {
+          tableId: table.id,
+          shopifyProductId: selectedProducts[i].id,
+          position: i,
+        }
+      });
     }
-  });
-  
-  return { success: true, tableId: table.id };
+
+    // Save attributes
+    for (let i = 0; i < selectedAttributes.length; i++) {
+      await db.comparisonAttribute.create({
+        data: {
+          tableId: table.id,
+          key: selectedAttributes[i],
+          label: selectedAttributes[i].charAt(0).toUpperCase() + selectedAttributes[i].slice(1),
+          enabled: true,
+          position: i,
+          isCustom: false,
+        }
+      });
+    }
+    
+    return { success: true, tableId: table.id };
+  } catch (error) {
+    return { error: "Failed to create table" };
+  }
 };
 
 export default function CreateTableWizard() {
   const submit = useSubmit();
   const navigate = useNavigate();
+  const actionData = useActionData<typeof action>();
   const [step, setStep] = useState(1);
+  const [tableName, setTableName] = useState("New Comparison Table");
+  const [selectedProducts, setSelectedProducts] = useState<any[]>([]);
+  const [attributes, setAttributes] = useState([
+    { key: "price", label: "Price", selected: true },
+    { key: "vendor", label: "Vendor", selected: true },
+    { key: "type", label: "Product Type", selected: true },
+    { key: "description", label: "Description", selected: false },
+  ]);
+  const [selectedTemplate, setSelectedTemplate] = useState("modern");
 
-  const handleNext = useCallback(() => setStep((s) => Math.min(s + 1, 4)), []);
+  useEffect(() => {
+    if (actionData && "success" in actionData && actionData.success) {
+      navigate(`/app/tables`);
+    }
+  }, [actionData, navigate]);
+
+  const selectProducts = async () => {
+    // @ts-ignore
+    const selected = await shopify.resourcePicker({
+      type: 'product',
+      multiple: true,
+      action: 'select',
+    });
+    if (selected) {
+      setSelectedProducts(selected);
+    }
+  };
+
+  const toggleAttribute = (key: string) => {
+    setAttributes(attributes.map(attr => 
+      attr.key === key ? { ...attr, selected: !attr.selected } : attr
+    ));
+  };
+
+  const handleNext = useCallback(() => {
+    if (step === 1 && selectedProducts.length === 0) {
+      // Must select at least 1 product
+      // @ts-ignore
+      shopify.toast.show("Please select at least one product");
+      return;
+    }
+    setStep((s) => Math.min(s + 1, 4));
+  }, [step, selectedProducts]);
+
   const handleBack = useCallback(() => setStep((s) => Math.max(s - 1, 1)), []);
   
   const handleSave = useCallback(() => {
     const formData = new FormData();
-    formData.append("action", "save");
+    formData.append("name", tableName);
+    formData.append("products", JSON.stringify(selectedProducts));
+    formData.append("attributes", JSON.stringify(attributes.filter(a => a.selected).map(a => a.key)));
+    formData.append("template", selectedTemplate);
     submit(formData, { method: "post" });
-  }, [submit]);
+  }, [submit, tableName, selectedProducts, attributes, selectedTemplate]);
 
   const progress = (step / 4) * 100;
 
@@ -76,20 +164,86 @@ export default function CreateTableWizard() {
           </BlockStack>
         </Card>
 
-        {/* Wizard Steps Content Placeholder */}
         <Card>
           <BlockStack gap="400">
             {step === 1 && (
-              <Text as="p">Product selection interface goes here. (GraphQL list, multi-select 2-10)</Text>
+              <BlockStack gap="400">
+                <Text as="p">Choose the products you want to compare side-by-side.</Text>
+                {selectedProducts.length === 0 ? (
+                  <EmptyState
+                    heading="No products selected"
+                    action={{content: 'Select products', onAction: selectProducts}}
+                    image="https://cdn.shopify.com/s/files/1/0262/4071/2726/files/emptystate-files.png"
+                  >
+                    <p>Select the products you want your customers to compare.</p>
+                  </EmptyState>
+                ) : (
+                  <BlockStack gap="400">
+                    <List>
+                      {selectedProducts.map((p, i) => (
+                        <List.Item key={i}>{p.title}</List.Item>
+                      ))}
+                    </List>
+                    <InlineStack>
+                      <Button onClick={selectProducts}>Change Products</Button>
+                    </InlineStack>
+                  </BlockStack>
+                )}
+              </BlockStack>
             )}
+
             {step === 2 && (
-              <Text as="p">Attribute selection interface goes here. (Drag and drop reordering, toggles)</Text>
+              <BlockStack gap="400">
+                <Text as="p">Select which attributes you want to show in the comparison table.</Text>
+                <FormLayout>
+                  {attributes.map((attr) => (
+                    <Checkbox
+                      key={attr.key}
+                      label={attr.label}
+                      checked={attr.selected}
+                      onChange={() => toggleAttribute(attr.key)}
+                    />
+                  ))}
+                </FormLayout>
+              </BlockStack>
             )}
+
             {step === 3 && (
-              <Text as="p">Design customization interface goes here. (Template picker, live preview)</Text>
+              <BlockStack gap="400">
+                <Text as="p">Choose a template for your comparison table.</Text>
+                <InlineStack gap="400">
+                  {['modern', 'minimal', 'bold'].map(tpl => (
+                    <Card key={tpl} background={selectedTemplate === tpl ? "bg-surface-active" : "bg-surface"}>
+                      <BlockStack gap="300" align="center">
+                        <Text as="h3" variant="headingSm">{tpl.toUpperCase()}</Text>
+                        <Button 
+                          variant={selectedTemplate === tpl ? "primary" : "secondary"}
+                          onClick={() => setSelectedTemplate(tpl)}
+                        >
+                          {selectedTemplate === tpl ? "Selected" : "Select"}
+                        </Button>
+                      </BlockStack>
+                    </Card>
+                  ))}
+                </InlineStack>
+              </BlockStack>
             )}
+
             {step === 4 && (
-              <Text as="p">Publishing options go here. (Block toggles, code snippets)</Text>
+              <BlockStack gap="400">
+                <Text as="p">Give your table a name so you can identify it later.</Text>
+                <FormLayout>
+                  <TextField 
+                    label="Table Name" 
+                    value={tableName} 
+                    onChange={setTableName} 
+                    autoComplete="off" 
+                  />
+                </FormLayout>
+                <Banner tone="info">
+                  Once saved, you can add this table to your storefront using the Theme Editor!
+                </Banner>
+              </BlockStack>
             )}
           </BlockStack>
         </Card>

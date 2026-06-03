@@ -13,6 +13,7 @@ import {
   Box,
 } from "@shopify/polaris";
 import { PlusIcon, ImportIcon, ChartVerticalIcon, ColorIcon } from "@shopify/polaris-icons";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { authenticate } from "../shopify.server";
 import db from "../db.server";
 
@@ -96,14 +97,19 @@ export default function Dashboard() {
           </Layout.Section>
         </Layout>
 
-        {/* Row 3: Charts placeholders */}
+        {/* Row 3: Charts */}
         <Layout>
           <Layout.Section variant="oneThird">
             <Card>
               <BlockStack gap="200">
                 <Text as="h3" variant="headingMd">Views (30d)</Text>
-                <Box minHeight="150px" background="bg-surface-secondary" borderRadius="200" padding="400">
-                  <Text as="p" tone="subdued" alignment="center">Line chart placeholder</Text>
+                <Box minHeight="150px">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={[{v: 10},{v: 20},{v: 15},{v: 30},{v: 25}]} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
+                      <Line type="monotone" dataKey="v" stroke="#8884d8" strokeWidth={2} dot={false} />
+                      <Tooltip />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </Box>
               </BlockStack>
             </Card>
@@ -112,8 +118,13 @@ export default function Dashboard() {
             <Card>
               <BlockStack gap="200">
                 <Text as="h3" variant="headingMd">Top Tables</Text>
-                <Box minHeight="150px" background="bg-surface-secondary" borderRadius="200" padding="400">
-                  <Text as="p" tone="subdued" alignment="center">Bar chart placeholder</Text>
+                <Box minHeight="150px">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={[{n: 'T1', v: 40},{n: 'T2', v: 30},{n: 'T3', v: 20}]} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
+                      <Bar dataKey="v" fill="#82ca9d" />
+                      <Tooltip />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </Box>
               </BlockStack>
             </Card>
@@ -122,8 +133,13 @@ export default function Dashboard() {
             <Card>
               <BlockStack gap="200">
                 <Text as="h3" variant="headingMd">CTR Trend</Text>
-                <Box minHeight="150px" background="bg-surface-secondary" borderRadius="200" padding="400">
-                  <Text as="p" tone="subdued" alignment="center">Line chart placeholder</Text>
+                <Box minHeight="150px">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={[{v: 2},{v: 5},{v: 4},{v: 8},{v: 7}]} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
+                      <Line type="monotone" dataKey="v" stroke="#ffc658" strokeWidth={2} dot={false} />
+                      <Tooltip />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </Box>
               </BlockStack>
             </Card>

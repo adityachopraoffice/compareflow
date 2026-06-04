@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ATTRIBUTE ROWS
     table.attributes.forEach(attr => {
       // Attribute name
-      html += `<div class="compareflow-cell compareflow-attr-name">${attr.name}</div>`;
+      html += `<div class="compareflow-cell compareflow-attr-name">${attr.label}</div>`;
       
       // Values for each product
       table.products.forEach(p => {

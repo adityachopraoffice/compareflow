@@ -188,7 +188,7 @@ export default function Dashboard() {
             <Card>
               <BlockStack gap="200">
                 <Text as="h3" variant="headingMd">Views (30d)</Text>
-                <Box minHeight="150px">
+                <div style={{ width: '100%', height: 150 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={viewsChart} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
                       <XAxis dataKey="date" hide />
@@ -197,7 +197,7 @@ export default function Dashboard() {
                       <Tooltip />
                     </LineChart>
                   </ResponsiveContainer>
-                </Box>
+                </div>
               </BlockStack>
             </Card>
           </Layout.Section>
@@ -205,7 +205,7 @@ export default function Dashboard() {
             <Card>
               <BlockStack gap="200">
                 <Text as="h3" variant="headingMd">Top Tables</Text>
-                <Box minHeight="150px">
+                <div style={{ width: '100%', height: 150 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={topTablesChart} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
                       <XAxis dataKey="n" hide />
@@ -214,7 +214,7 @@ export default function Dashboard() {
                       <Tooltip />
                     </BarChart>
                   </ResponsiveContainer>
-                </Box>
+                </div>
               </BlockStack>
             </Card>
           </Layout.Section>
@@ -222,7 +222,7 @@ export default function Dashboard() {
             <Card>
               <BlockStack gap="200">
                 <Text as="h3" variant="headingMd">CTR Trend (%)</Text>
-                <Box minHeight="150px">
+                <div style={{ width: '100%', height: 150 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={ctrChart} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
                       <XAxis dataKey="date" hide />
@@ -231,7 +231,7 @@ export default function Dashboard() {
                       <Tooltip />
                     </LineChart>
                   </ResponsiveContainer>
-                </Box>
+                </div>
               </BlockStack>
             </Card>
           </Layout.Section>

@@ -1,39 +1,124 @@
-/* compareflow.css */
-.compareflow-button {
-  background-color: #000;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
+/* compareflow.css - Storefront Styles */
+
+.compareflow-wrapper {
+  margin: 2rem 0;
+  width: 100%;
+  overflow-x: auto;
+  font-family: inherit; /* Inherit from merchant's theme by default */
 }
 
-.compareflow-floating-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #fff;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-  padding: 15px;
+.compareflow-grid {
+  display: grid;
+  min-width: 600px; /* Force scroll on small mobile */
+}
+
+.compareflow-cell {
+  padding: 1rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  z-index: 9999;
+  justify-content: center;
+  text-align: center;
 }
 
-.compareflow-drawer-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: none;
-  z-index: 9998;
+.compareflow-header-features {
+  font-weight: 700;
+  justify-content: flex-start;
+  text-align: left;
 }
 
-.compareflow-drawer {
-  position: fixed;
-  top: 0; right: -400px; bottom: 0;
-  width: 400px;
+.compareflow-header-product {
+  font-weight: 700;
+}
+
+.compareflow-attr-name {
+  font-weight: 600;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+
+/* === THEMES === */
+
+/* 1. Modern Theme (Default) */
+.compareflow-theme-modern {
   background: #fff;
-  z-index: 9999;
-  transition: right 0.3s ease;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  border: 1px solid #f1f5f9;
+}
+.compareflow-theme-modern .compareflow-cell {
+  border-bottom: 1px solid #f1f5f9;
+}
+.compareflow-theme-modern .compareflow-grid > div:nth-child(-n+4) { /* Assuming max 3 products + 1 feature col = 4 */
+  border-bottom: 2px solid #e2e8f0;
+}
+
+
+/* 2. Minimal Theme */
+.compareflow-theme-minimal {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.compareflow-theme-minimal .compareflow-grid {
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+}
+.compareflow-theme-minimal .compareflow-cell {
+  border-bottom: 1px solid #eaeaea;
+}
+.compareflow-theme-minimal .compareflow-grid > div:last-child,
+.compareflow-theme-minimal .compareflow-grid > div:nth-last-child(2),
+.compareflow-theme-minimal .compareflow-grid > div:nth-last-child(3),
+.compareflow-theme-minimal .compareflow-grid > div:nth-last-child(4) {
+  border-bottom: none; /* Remove bottom border from last row */
+}
+
+
+/* 3. Dark Theme */
+.compareflow-theme-dark {
+  background: #0f172a;
+  color: #f8fafc;
+  border-radius: 12px;
+}
+.compareflow-theme-dark .compareflow-cell {
+  border-bottom: 1px solid #1e293b;
+}
+.compareflow-theme-dark .compareflow-grid > div:nth-child(-n+4) {
+  border-bottom: 2px solid #334155;
+}
+
+
+/* 4. Enterprise Theme */
+.compareflow-theme-enterprise {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+}
+.compareflow-theme-enterprise .compareflow-cell {
+  border-bottom: 1px solid #cbd5e1;
+  border-right: 1px solid #cbd5e1;
+}
+.compareflow-theme-enterprise .compareflow-cell:last-child, 
+.compareflow-theme-enterprise .compareflow-cell:nth-child(4n) {
+  border-right: none;
+}
+
+
+/* 5. Premium Theme */
+.compareflow-theme-premium {
+  background: #fffdf5; /* Slight cream/gold tint */
+  border-radius: 8px;
+  font-family: Georgia, serif;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+  border: 1px solid #eee8d5;
+}
+.compareflow-theme-premium .compareflow-cell {
+  border-bottom: 1px solid #f3efdf;
+}
+.compareflow-theme-premium .compareflow-header-features,
+.compareflow-theme-premium .compareflow-header-product {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #b59f3b; /* Goldish */
+  border-bottom: 2px solid #e2d8a5;
 }

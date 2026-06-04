@@ -38,6 +38,11 @@ api_version = "2026-07"
 [access_scopes]
 scopes = "read_products,write_products,read_themes,write_script_tags"
 
+[app_proxy]
+url = "https://compareflow-mu.vercel.app/api"
+subpath = "compareflow"
+prefix = "apps"
+
 [auth]
 redirect_urls = [ 
   "https://compareflow-mu.vercel.app/auth/callback",

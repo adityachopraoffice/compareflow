@@ -1,13 +1,31 @@
-<div class="compareflow-table-container">
+{{ 'compareflow.css' | asset_url | stylesheet_tag }}
+
+<div class="compareflow-table-container" data-table-id="{{ block.settings.table_id }}">
   <!-- Table rendered via JS -->
+  <div class="compareflow-loading-state" style="text-align: center; padding: 40px;">
+    Loading CompareFlow...
+  </div>
 </div>
+
+<script src="{{ 'compareflow.js' | asset_url }}" defer="defer"></script>
 
 {% schema %}
 {
   "name": "Comparison Table",
   "target": "section",
   "settings": [
-    { "type": "color", "id": "accent_color", "label": "Accent Color", "default": "#000000" }
+    { 
+      "type": "text", 
+      "id": "table_id", 
+      "label": "Table ID", 
+      "info": "Leave blank to automatically load the most recently published table, or paste a specific Table ID here." 
+    },
+    { 
+      "type": "color", 
+      "id": "accent_color", 
+      "label": "Accent Color", 
+      "default": "#000000" 
+    }
   ]
 }
 {% endschema %}

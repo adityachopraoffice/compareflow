@@ -50,6 +50,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
                 vendor
                 productType
                 description(truncateAt: 120)
+                variants(first: 1) {
+                  nodes {
+                    id
+                  }
+                }
                 priceRangeV2 {
                   minVariantPrice {
                     amount
@@ -86,6 +91,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         } catch(e) {}
       }
 
+      let variantId = "";
+      if (pData?.variants?.nodes?.length > 0) {
+        variantId = pData.variants.nodes[0].id.split('/').pop() || "";
+      }
+
       return {
         ...p,
         title: pData?.title || "Unknown Product",
@@ -94,7 +104,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         productType: pData?.productType || "-",
         description: pData?.description || "-",
         price: formattedPrice,
-        imageUrl: pData?.featuredImage?.url || ""
+        imageUrl: pData?.featuredImage?.url || "",
+        variantId
       };
     });
 

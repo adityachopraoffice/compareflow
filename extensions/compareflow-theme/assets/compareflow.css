@@ -26,16 +26,64 @@
   text-align: left;
 }
 
+/* === Header Product Styles === */
 .compareflow-header-product {
   font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.compareflow-attr-name {
+.compareflow-product-image {
+  width: 100%;
+  max-width: 120px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 0 auto;
+}
+
+.compareflow-product-image-placeholder {
+  width: 100%;
+  max-width: 120px;
+  aspect-ratio: 1 / 1;
+  background: #f1f5f9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 12px;
+  margin: 0 auto;
+}
+
+.compareflow-product-title {
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.compareflow-add-to-cart-btn {
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 13px;
   font-weight: 600;
-  justify-content: flex-start;
-  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
 }
 
+.compareflow-add-to-cart-btn:hover {
+  background: #333;
+}
+
+.compareflow-add-to-cart-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
 
 /* === THEMES === */
 

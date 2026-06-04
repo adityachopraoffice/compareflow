@@ -49,9 +49,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // HEADER ROW
     html += `<div class="compareflow-cell compareflow-header-features">Features</div>`;
     table.products.forEach(p => {
+      const imgHtml = p.imageUrl 
+        ? `<img src="${p.imageUrl}" alt="${p.title}" class="compareflow-product-image" />`
+        : `<div class="compareflow-product-image-placeholder">No Image</div>`;
+        
+      const addToCartHtml = p.variantId 
+        ? `<button class="compareflow-add-to-cart-btn" data-variant-id="${p.variantId}">Add to Cart</button>`
+        : ``;
+
       html += `
         <div class="compareflow-cell compareflow-header-product">
+          ${imgHtml}
           <div class="compareflow-product-title">${p.title}</div>
+          ${addToCartHtml}
         </div>
       `;
     });
@@ -88,5 +98,47 @@ document.addEventListener('DOMContentLoaded', () => {
     html += `</div></div>`; // End Grid & Wrapper
 
     container.innerHTML = html;
+  }
+});
+
+// Handle Add to Cart clicks globally using event delegation
+document.addEventListener('click', (e) => {
+  if (e.target && e.target.classList.contains('compareflow-add-to-cart-btn')) {
+    const btn = e.target;
+    const variantId = btn.dataset.variantId;
+    
+    if (!variantId) return;
+    
+    const originalText = btn.innerText;
+    btn.innerText = 'Adding...';
+    btn.disabled = true;
+
+    // Use Shopify's standard AJAX Cart API
+    const routesRoot = window.Shopify && window.Shopify.routes && window.Shopify.routes.root ? window.Shopify.routes.root : '/';
+    
+    fetch(routesRoot + 'cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items: [{ id: variantId, quantity: 1 }]
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      btn.innerText = 'Added to Cart!';
+      // Optional: Give the user some time to read it, then reset
+      setTimeout(() => {
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }, 2000);
+      
+      // Optional: Trigger a custom event in case the theme's cart drawer is listening
+      document.dispatchEvent(new CustomEvent('cart:updated'));
+    })
+    .catch(err => {
+      console.error('Add to cart failed:', err);
+      btn.innerText = 'Error';
+      btn.disabled = false;
+    });
   }
 });

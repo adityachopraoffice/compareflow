@@ -22,6 +22,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         renderTable(container, data.table);
+        
+        // Track the view event
+        fetch('/apps/compareflow/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tableId: tableId || data.table.id,
+            eventType: 'view'
+          })
+        }).catch(err => console.error('Failed to track view:', err));
       })
       .catch(err => {
         console.error('CompareFlow fetch error:', err);
@@ -134,6 +144,24 @@ document.addEventListener('click', (e) => {
       
       // Optional: Trigger a custom event in case the theme's cart drawer is listening
       document.dispatchEvent(new CustomEvent('cart:updated'));
+
+      // Find the closest table ID to track which table this click came from
+      const tableContainer = btn.closest('.compareflow-table-container');
+      const tableId = tableContainer ? tableContainer.dataset.tableId : null;
+
+      if (tableId) {
+        // Track the click event
+        fetch('/apps/compareflow/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tableId: tableId,
+            eventType: 'click',
+            metadata: { variantId: variantId }
+          })
+        }).catch(err => console.error('Failed to track click:', err));
+      }
+
     })
     .catch(err => {
       console.error('Add to cart failed:', err);

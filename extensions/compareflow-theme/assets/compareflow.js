@@ -63,14 +63,22 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Values for each product
       table.products.forEach(p => {
-        // Find the specific value for this product and attribute if it was saved in a structured way.
-        // Currently, we don't have structured attribute-value saving per product in the db schema, 
-        // so we'll render a placeholder or random checkmark just to show the layout works, 
-        // OR read from a JSON blob if it exists.
+        let displayValue = '';
+        const key = attr.key.toLowerCase();
         
-        // For demonstration purposes of the storefront layout:
+        if (key === 'price') {
+          displayValue = p.price || '-';
+        } else if (key === 'vendor') {
+          displayValue = p.vendor || '-';
+        } else if (key === 'type' || key === 'product_type') {
+          displayValue = p.productType || '-';
+        } else {
+          // Fallback to checkmark for custom binary attributes
+          displayValue = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        }
+        
         html += `<div class="compareflow-cell compareflow-attr-value">
-                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                   ${displayValue}
                  </div>`;
       });
     });

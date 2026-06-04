@@ -47,6 +47,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
                 id
                 title
                 handle
+                vendor
+                productType
+                priceRangeV2 {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
                 featuredImage { url }
               }
             }
@@ -66,10 +74,24 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     table.products = table.products.map((p: any) => {
       const shopifyId = p.shopifyProductId.includes("gid://") ? p.shopifyProductId : `gid://shopify/Product/${p.shopifyProductId}`;
       const pData = shopifyProductsData.find((n: any) => n && n.id === shopifyId);
+      
+      let formattedPrice = "-";
+      if (pData?.priceRangeV2) {
+        try {
+          formattedPrice = new Intl.NumberFormat('en-US', { 
+            style: 'currency', 
+            currency: pData.priceRangeV2.minVariantPrice.currencyCode 
+          }).format(parseFloat(pData.priceRangeV2.minVariantPrice.amount));
+        } catch(e) {}
+      }
+
       return {
         ...p,
         title: pData?.title || "Unknown Product",
         handle: pData?.handle || "",
+        vendor: pData?.vendor || "-",
+        productType: pData?.productType || "-",
+        price: formattedPrice,
         imageUrl: pData?.featuredImage?.url || ""
       };
     });

@@ -19,18 +19,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (action === "upgrade") {
     const targetPlan = plan === "Starter" ? STARTER_PLAN : PRO_PLAN;
-    await billing.require({
+    const billingCheck = await billing.require({
       // @ts-ignore
       plans: [targetPlan],
       isTest: true,
-      onFailure: async () => {
-        throw await billing.request({
-          // @ts-ignore
-          plan: targetPlan,
-          isTest: true,
-          returnUrl: `https://admin.shopify.com/store/${session.shop.split('.')[0]}/apps/${process.env.SHOPIFY_API_KEY}/app/billing`,
-        });
-      },
+      onFailure: async () => billing.request({
+        // @ts-ignore
+        plan: targetPlan,
+        isTest: true,
+        returnUrl: `https://admin.shopify.com/store/${session.shop.split('.')[0]}/apps/compareflow/app/billing`,
+      }),
     });
   } else if (action === "cancel") {
     const billingCheck = await billing.require({

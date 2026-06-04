@@ -11,6 +11,7 @@ import {
   Icon,
   List,
   Box,
+  Banner,
 } from "@shopify/polaris";
 import { PlusIcon, ImportIcon, ChartVerticalIcon, ColorIcon } from "@shopify/polaris-icons";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
@@ -33,17 +34,30 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     include: { table: true }
   });
 
-  return { totalTables, publishedTables, productsCompared, clicks: 0, events };
+  return { totalTables, publishedTables, productsCompared, clicks: 0, events, plan: shopRecord?.plan || "Free" };
 };
 
 export default function Dashboard() {
-  const { totalTables, publishedTables, productsCompared, clicks, events } = useLoaderData<typeof loader>();
+  const { totalTables, publishedTables, productsCompared, clicks, events, plan } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
   return (
     <Page title="CompareFlow Dashboard">
       <BlockStack gap="500">
         
+        <Layout>
+          <Layout.Section>
+            <Banner
+              title={`Current Plan: ${plan}`}
+              tone={plan === "Pro" ? "success" : "info"}
+            >
+              {plan === "Free" && <Text as="p">Upgrade to Starter or Pro to unlock premium templates and advanced analytics.</Text>}
+              {plan === "Starter" && <Text as="p">You have access to premium templates. Upgrade to Pro for Custom CSS!</Text>}
+              {plan === "Pro" && <Text as="p">You are on the highest tier! Enjoy all features.</Text>}
+            </Banner>
+          </Layout.Section>
+        </Layout>
+
         {/* Row 1: Metric Cards */}
         <InlineGrid columns={4} gap="400">
           <div className="premium-card bg-gradient-1" style={{ padding: '20px' }}>

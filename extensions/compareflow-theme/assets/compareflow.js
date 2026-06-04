@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridCols = table.products.length + 1;
 
     let html = `<div class="${wrapperClass}">`;
-    html += `<div class="compareflow-grid" style="grid-template-columns: repeat(${gridCols}, 1fr);">`;
+    html += `<div class="compareflow-grid" style="grid-template-columns: minmax(150px, 1.2fr) repeat(${gridCols - 1}, minmax(160px, 1fr));">`;
 
     // HEADER ROW
     html += `<div class="compareflow-cell compareflow-header-features">Features</div>`;

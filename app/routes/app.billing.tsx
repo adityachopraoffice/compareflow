@@ -115,7 +115,7 @@ export default function Billing() {
           <div className="premium-card" style={{ padding: '24px', background: '#fff' }}>
             <BlockStack gap="400">
               <Text as="h3" variant="headingMd">Starter</Text>
-              <Text as="p" variant="headingXl">$9/m</Text>
+              <Text as="p" variant="headingXl">$69/m</Text>
               <List>
                 <List.Item>Unlimited Comparison Tables</List.Item>
                 <List.Item>3 Premium Templates</List.Item>
@@ -135,7 +135,7 @@ export default function Billing() {
           <div className="premium-card pro-plan-card" style={{ padding: '24px' }}>
             <BlockStack gap="400">
               <Text as="h3" variant="headingMd">Pro</Text>
-              <Text as="p" variant="headingXl">$19/m</Text>
+              <Text as="p" variant="headingXl">$129/m</Text>
               <List>
                 <List.Item>Unlimited Comparison Tables</List.Item>
                 <List.Item>All Premium Templates</List.Item>

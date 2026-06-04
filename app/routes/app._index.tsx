@@ -15,13 +15,30 @@ import {
 } from "@shopify/polaris";
 import { PlusIcon, ImportIcon, ChartVerticalIcon, ColorIcon } from "@shopify/polaris-icons";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
-import { authenticate } from "../shopify.server";
+import { authenticate, STARTER_PLAN, PRO_PLAN } from "../shopify.server";
 import db from "../db.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session } = await authenticate.admin(request);
+  const { session, billing } = await authenticate.admin(request);
   const { shop } = session;
   const shopRecord = await db.shop.findUnique({ where: { domain: shop } });
+
+  const billingCheck = await billing.check({
+    // @ts-ignore
+    plans: [STARTER_PLAN, PRO_PLAN],
+    isTest: true,
+  });
+
+  const hasPro = billingCheck.appSubscriptions.some(sub => sub.name === PRO_PLAN);
+  const hasStarter = billingCheck.appSubscriptions.some(sub => sub.name === STARTER_PLAN);
+  let plan = "Free";
+  if (hasPro) plan = "Pro";
+  else if (hasStarter) plan = "Starter";
+
+  // Sync to db
+  if (shopRecord) {
+    await db.shop.update({ where: { domain: shop }, data: { plan: plan === "Free" ? "Free" : `${plan} Plan` }});
+  }
 
   const totalTables = await db.comparisonTable.count({ where: { shopId: shopRecord?.id } });
   const publishedTables = await db.comparisonTable.count({ where: { shopId: shopRecord?.id, status: "published" } });
@@ -34,7 +51,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     include: { table: true }
   });
 
-  return { totalTables, publishedTables, productsCompared, clicks: 0, events, plan: shopRecord?.plan?.replace(" Plan", "") || "Free" };
+  return { totalTables, publishedTables, productsCompared, clicks: 0, events, plan };
 };
 
 export default function Dashboard() {

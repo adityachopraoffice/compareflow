@@ -5,10 +5,30 @@ import { authenticate, STARTER_PLAN, PRO_PLAN } from "../shopify.server";
 import db from "../db.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session } = await authenticate.admin(request);
+  const { session, billing } = await authenticate.admin(request);
   const { shop } = session;
-  const shopRecord = await db.shop.findUnique({ where: { domain: shop } });
-  return { plan: shopRecord?.plan?.replace(" Plan", "") || "Free" };
+  
+  const billingCheck = await billing.check({
+    // @ts-ignore
+    plans: [STARTER_PLAN, PRO_PLAN],
+    isTest: true,
+  });
+
+  const hasPro = billingCheck.appSubscriptions.some(sub => sub.name === PRO_PLAN);
+  const hasStarter = billingCheck.appSubscriptions.some(sub => sub.name === STARTER_PLAN);
+  
+  let plan = "Free";
+  if (hasPro) plan = "Pro";
+  else if (hasStarter) plan = "Starter";
+
+  // Sync back to db just in case webhook was missed
+  await db.shop.upsert({
+    where: { domain: shop },
+    update: { plan: plan === "Free" ? "Free" : `${plan} Plan` },
+    create: { domain: shop, accessToken: "", plan: plan === "Free" ? "Free" : `${plan} Plan` }
+  });
+
+  return { plan };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {

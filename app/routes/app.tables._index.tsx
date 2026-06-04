@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useNavigate } from "@remix-run/react";
+import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
+import { useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import {
   Page,
   Card,
@@ -27,12 +27,39 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return { tables };
 };
 
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const { session } = await authenticate.admin(request);
+  const { shop } = session;
+  const formData = await request.formData();
+  
+  if (formData.get("intent") === "delete") {
+    const tableId = formData.get("tableId") as string;
+    const shopRecord = await db.shop.findUnique({ where: { domain: shop } });
+    if (shopRecord) {
+      await db.comparisonTable.delete({
+        where: { id: tableId, shopId: shopRecord.id }
+      });
+    }
+  }
+  return null;
+};
+
 export default function TablesIndex() {
   const { tables } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
+  const submit = useSubmit();
 
   const { selectedResources, allResourcesSelected, handleSelectionChange } =
     useIndexResourceState(tables);
+
+  const handleDelete = (id: string) => {
+    if (confirm("Are you sure you want to delete this table?")) {
+      const formData = new FormData();
+      formData.append("intent", "delete");
+      formData.append("tableId", id);
+      submit(formData, { method: "post" });
+    }
+  };
 
   const rowMarkup = tables.map(
     ({ id, name, status, viewCount, clickCount, createdAt, updatedAt, _count }, index) => (
@@ -58,7 +85,10 @@ export default function TablesIndex() {
         <IndexTable.Cell>{new Date(createdAt).toLocaleDateString()}</IndexTable.Cell>
         <IndexTable.Cell>{new Date(updatedAt).toLocaleDateString()}</IndexTable.Cell>
         <IndexTable.Cell>
-          <Button variant="plain" onClick={() => navigate(`/app/tables/${id}`)}>Edit</Button>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Button variant="plain" onClick={() => navigate(`/app/tables/${id}`)}>Edit</Button>
+            <Button variant="plain" tone="critical" onClick={() => handleDelete(id)}>Delete</Button>
+          </div>
         </IndexTable.Cell>
       </IndexTable.Row>
     )

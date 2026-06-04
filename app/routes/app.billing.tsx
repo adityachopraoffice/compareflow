@@ -8,7 +8,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
   const { shop } = session;
   const shopRecord = await db.shop.findUnique({ where: { domain: shop } });
-  return { plan: shopRecord?.plan || "Free" };
+  return { plan: shopRecord?.plan?.replace(" Plan", "") || "Free" };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {

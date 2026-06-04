@@ -34,7 +34,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     include: { table: true }
   });
 
-  return { totalTables, publishedTables, productsCompared, clicks: 0, events, plan: shopRecord?.plan || "Free" };
+  return { totalTables, publishedTables, productsCompared, clicks: 0, events, plan: shopRecord?.plan?.replace(" Plan", "") || "Free" };
 };
 
 export default function Dashboard() {

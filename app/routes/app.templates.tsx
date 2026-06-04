@@ -124,7 +124,10 @@ export default function Templates() {
                       <InlineGrid columns={2} gap="200">
                         <Button onClick={() => setPreviewTemplate(template)}>Live Preview</Button>
                         {isUnlocked ? (
-                          <Button variant="primary">Apply</Button>
+                          <Button variant="primary" onClick={() => {
+                            // @ts-ignore
+                            shopify.toast.show(`${template.name} Template Applied Successfully!`);
+                          }}>Apply</Button>
                         ) : (
                           <Button variant="primary" tone="success" onClick={() => navigate("/app/billing")}>Upgrade</Button>
                         )}

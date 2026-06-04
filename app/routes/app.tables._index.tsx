@@ -74,6 +74,16 @@ export default function TablesIndex() {
             {name}
           </Text>
         </IndexTable.Cell>
+        <IndexTable.Cell>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Text as="span" tone="subdued">{id}</Text>
+            <Button size="micro" onClick={() => {
+              navigator.clipboard.writeText(id);
+              // @ts-ignore
+              shopify.toast.show('Table ID copied to clipboard');
+            }}>Copy ID</Button>
+          </div>
+        </IndexTable.Cell>
         <IndexTable.Cell>{_count.products}</IndexTable.Cell>
         <IndexTable.Cell>
           <Badge tone={status === "published" ? "success" : "info"}>
@@ -113,6 +123,7 @@ export default function TablesIndex() {
           onSelectionChange={handleSelectionChange}
           headings={[
             { title: "Name" },
+            { title: "Table ID" },
             { title: "Products" },
             { title: "Status" },
             { title: "Views" },

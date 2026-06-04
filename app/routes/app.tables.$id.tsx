@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useSubmit, useNavigate, useActionData } from "@remix-run/react";
+import { useSubmit, useNavigate, useActionData, useLoaderData } from "@remix-run/react";
 import {
   Page,
   Card,
@@ -138,10 +138,10 @@ export default function EditTableWizard() {
   const [tableName, setTableName] = useState(table.name);
   const [selectedProducts, setSelectedProducts] = useState<any[]>(shopifyProducts);
   const [attributes, setAttributes] = useState([
-    { key: "price", label: "Price", selected: table.attributes.some(a => a.key === 'price') },
-    { key: "vendor", label: "Vendor", selected: table.attributes.some(a => a.key === 'vendor') },
-    { key: "type", label: "Product Type", selected: table.attributes.some(a => a.key === 'type') },
-    { key: "description", label: "Description", selected: table.attributes.some(a => a.key === 'description') },
+    { key: "price", label: "Price", selected: table.attributes.some((a: any) => a.key === 'price') },
+    { key: "vendor", label: "Vendor", selected: table.attributes.some((a: any) => a.key === 'vendor') },
+    { key: "type", label: "Product Type", selected: table.attributes.some((a: any) => a.key === 'type') },
+    { key: "description", label: "Description", selected: table.attributes.some((a: any) => a.key === 'description') },
   ]);
   const [selectedTemplate, setSelectedTemplate] = useState(table.template || "modern");
 

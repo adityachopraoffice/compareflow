@@ -44,6 +44,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const publishedTables = await db.comparisonTable.count({ where: { shopId: shopRecord?.id, status: "published" } });
   const productsCompared = await db.comparisonProduct.count({ where: { table: { shopId: shopRecord?.id } } });
   
+  const totalClicksAgg = await db.comparisonTable.aggregate({
+    where: { shopId: shopRecord?.id },
+    _sum: { clickCount: true }
+  });
+  const clicks = totalClicksAgg._sum.clickCount || 0;
+
   const events = await db.analyticsEvent.findMany({
     where: { shopId: shopRecord?.id },
     orderBy: { createdAt: "desc" },
@@ -51,11 +57,55 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     include: { table: true }
   });
 
-  return { totalTables, publishedTables, productsCompared, clicks: 0, events, plan };
+  // Fetch data for charts
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const recentEvents = await db.analyticsEvent.findMany({
+    where: { 
+      shopId: shopRecord?.id,
+      createdAt: { gte: thirtyDaysAgo }
+    },
+    select: { eventType: true, createdAt: true }
+  });
+
+  const dailyStats: Record<string, { views: number, clicks: number }> = {};
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = `${d.getMonth() + 1}/${d.getDate()}`;
+    dailyStats[dateStr] = { views: 0, clicks: 0 };
+  }
+
+  recentEvents.forEach(e => {
+    const d = new Date(e.createdAt);
+    const dateStr = `${d.getMonth() + 1}/${d.getDate()}`;
+    if (dailyStats[dateStr]) {
+      if (e.eventType === 'view') dailyStats[dateStr].views++;
+      if (e.eventType === 'click') dailyStats[dateStr].clicks++;
+    }
+  });
+
+  const viewsChart = Object.keys(dailyStats).map(date => ({ date, v: dailyStats[date].views }));
+  const ctrChart = Object.keys(dailyStats).map(date => {
+    const v = dailyStats[date].views;
+    const c = dailyStats[date].clicks;
+    return { date, v: v > 0 ? Number(((c / v) * 100).toFixed(1)) : 0 };
+  });
+
+  const topTablesData = await db.comparisonTable.findMany({
+    where: { shopId: shopRecord?.id },
+    orderBy: { viewCount: 'desc' },
+    take: 4,
+    select: { name: true, viewCount: true }
+  });
+  const topTablesChart = topTablesData.map(t => ({ n: (t.name.length > 10 ? t.name.substring(0, 10) + '...' : t.name), v: t.viewCount }));
+
+  return { totalTables, publishedTables, productsCompared, clicks, events, plan, viewsChart, ctrChart, topTablesChart };
 };
 
 export default function Dashboard() {
-  const { totalTables, publishedTables, productsCompared, clicks, events, plan } = useLoaderData<typeof loader>();
+  const { totalTables, publishedTables, productsCompared, clicks, events, plan, viewsChart, ctrChart, topTablesChart } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
   return (
@@ -140,7 +190,7 @@ export default function Dashboard() {
                 <Text as="h3" variant="headingMd">Views (30d)</Text>
                 <Box minHeight="150px">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={[{v: 10},{v: 20},{v: 15},{v: 30},{v: 25}]} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
+                    <LineChart data={viewsChart} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
                       <Line type="monotone" dataKey="v" stroke="#8884d8" strokeWidth={2} dot={false} />
                       <Tooltip />
                     </LineChart>
@@ -155,8 +205,9 @@ export default function Dashboard() {
                 <Text as="h3" variant="headingMd">Top Tables</Text>
                 <Box minHeight="150px">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={[{n: 'T1', v: 40},{n: 'T2', v: 30},{n: 'T3', v: 20}]} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
+                    <BarChart data={topTablesChart} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
                       <Bar dataKey="v" fill="#82ca9d" />
+                      <XAxis dataKey="n" hide />
                       <Tooltip />
                     </BarChart>
                   </ResponsiveContainer>
@@ -167,10 +218,10 @@ export default function Dashboard() {
           <Layout.Section variant="oneThird">
             <Card>
               <BlockStack gap="200">
-                <Text as="h3" variant="headingMd">CTR Trend</Text>
+                <Text as="h3" variant="headingMd">CTR Trend (%)</Text>
                 <Box minHeight="150px">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={[{v: 2},{v: 5},{v: 4},{v: 8},{v: 7}]} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
+                    <LineChart data={ctrChart} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
                       <Line type="monotone" dataKey="v" stroke="#ffc658" strokeWidth={2} dot={false} />
                       <Tooltip />
                     </LineChart>

@@ -37,6 +37,50 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return { plan, templates: TEMPLATES };
 };
 
+const PreviewTable = ({ template }: { template: any }) => {
+  return (
+    <div style={{
+      background: template.id === 'dark' ? '#0f172a' : (template.id === 'minimal' ? '#fff' : '#f8fafc'),
+      color: template.id === 'dark' ? '#f8fafc' : '#0f172a',
+      padding: '20px',
+      borderRadius: '8px',
+      fontFamily: template.id === 'premium' ? 'Georgia, serif' : 'Inter, sans-serif',
+      border: template.id === 'minimal' ? 'none' : '1px solid #e2e8f0',
+      boxShadow: template.id === 'modern' ? '0 10px 25px rgba(0,0,0,0.05)' : 'none',
+      width: '100%',
+      boxSizing: 'border-box'
+    }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gap: template.id === 'minimal' ? '0' : '8px',
+        textAlign: 'center',
+        borderTop: template.id === 'minimal' ? '2px solid #000' : 'none',
+        borderBottom: template.id === 'minimal' ? '2px solid #000' : 'none',
+        border: template.id === 'enterprise' ? '1px solid #cbd5e1' : undefined,
+        fontSize: '12px'
+      }}>
+        {/* Header Row */}
+        <div style={{ padding: '10px', fontWeight: 'bold', borderBottom: template.id !== 'minimal' ? '2px solid ' + (template.id === 'dark' ? '#334155' : '#e2e8f0') : 'none' }}>Features</div>
+        <div style={{ padding: '10px', fontWeight: 'bold', borderBottom: template.id !== 'minimal' ? '2px solid ' + (template.id === 'dark' ? '#334155' : '#e2e8f0') : 'none' }}>Basic</div>
+        <div style={{ padding: '10px', fontWeight: 'bold', borderBottom: template.id !== 'minimal' ? '2px solid ' + (template.id === 'dark' ? '#334155' : '#e2e8f0') : 'none', background: template.id === 'dark' ? 'linear-gradient(180deg, rgba(56,189,248,0.1) 0%, transparent 100%)' : 'rgba(56,189,248,0.05)', color: template.id === 'dark' ? '#38bdf8' : '#0ea5e9' }}>Pro</div>
+
+        {/* Data Rows */}
+        {[
+          ['Price', '$19', '$49'],
+          ['Rating', '4.5/5', '5.0/5'],
+        ].map((row, i) => (
+          <React.Fragment key={i}>
+            <div style={{ padding: '10px', borderBottom: template.id === 'enterprise' ? '1px solid #cbd5e1' : '1px solid ' + (template.id === 'dark' ? '#1e293b' : '#f1f5f9'), textAlign: 'left', fontWeight: 'bold' }}>{row[0]}</div>
+            <div style={{ padding: '10px', borderBottom: template.id === 'enterprise' ? '1px solid #cbd5e1' : '1px solid ' + (template.id === 'dark' ? '#1e293b' : '#f1f5f9') }}>{row[1]}</div>
+            <div style={{ padding: '10px', borderBottom: template.id === 'enterprise' ? '1px solid #cbd5e1' : '1px solid ' + (template.id === 'dark' ? '#1e293b' : '#f1f5f9'), background: template.id === 'dark' ? 'rgba(56,189,248,0.05)' : 'rgba(56,189,248,0.02)', fontWeight: 'bold' }}>{row[2]}</div>
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default function Templates() {
   const { plan, templates } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
@@ -57,14 +101,15 @@ export default function Templates() {
             return (
               <Card key={template.id} padding="0">
                 <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                  <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid #eee', position: 'relative' }}>
-                    <img 
-                      src={`/images/${template.id}.png`} 
-                      alt={`${template.name} preview`} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                    />
+                  <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid #eee', position: 'relative', background: template.id === 'dark' ? '#020617' : '#f8fafc', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    
+                    {/* Live CSS Thumbnail instead of image */}
+                    <div style={{ width: '150%', transform: 'scale(0.65)', transformOrigin: 'center' }}>
+                      <PreviewTable template={template} />
+                    </div>
+
                     {!isUnlocked && (
-                      <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(0,0,0,0.7)', borderRadius: '4px', padding: '4px 8px', color: '#fff', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(0,0,0,0.7)', borderRadius: '4px', padding: '4px 8px', color: '#fff', display: 'flex', alignItems: 'center', gap: '4px', zIndex: 10 }}>
                         <Icon source={LockIcon} tone="base" />
                         <Text as="span" variant="bodySm" fontWeight="bold">Locked</Text>
                       </div>
@@ -103,53 +148,9 @@ export default function Templates() {
           <Modal.Section>
             <BlockStack gap="400">
               <Text as="p">This is a simulated preview of how the <b>{previewTemplate.name}</b> template looks.</Text>
-              
-              <div style={{
-                background: previewTemplate.id === 'dark' ? '#0f172a' : (previewTemplate.id === 'minimal' ? '#fff' : '#f8fafc'),
-                color: previewTemplate.id === 'dark' ? '#f8fafc' : '#0f172a',
-                padding: '30px',
-                borderRadius: '12px',
-                fontFamily: previewTemplate.id === 'premium' ? 'Georgia, serif' : 'Inter, sans-serif',
-                border: previewTemplate.id === 'minimal' ? 'none' : '1px solid #e2e8f0',
-                boxShadow: previewTemplate.id === 'modern' ? '0 10px 25px rgba(0,0,0,0.05)' : 'none'
-              }}>
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr 1fr 1fr',
-                  gap: previewTemplate.id === 'minimal' ? '0' : '10px',
-                  textAlign: 'center',
-                  borderTop: previewTemplate.id === 'minimal' ? '2px solid #000' : 'none',
-                  borderBottom: previewTemplate.id === 'minimal' ? '2px solid #000' : 'none',
-                  border: previewTemplate.id === 'enterprise' ? '1px solid #cbd5e1' : undefined
-                }}>
-                  {/* Header Row */}
-                  <div style={{ padding: '15px', fontWeight: 'bold', borderBottom: previewTemplate.id !== 'minimal' ? '2px solid ' + (previewTemplate.id === 'dark' ? '#334155' : '#e2e8f0') : 'none' }}>Features</div>
-                  <div style={{ padding: '15px', fontWeight: 'bold', borderBottom: previewTemplate.id !== 'minimal' ? '2px solid ' + (previewTemplate.id === 'dark' ? '#334155' : '#e2e8f0') : 'none' }}>Basic Model</div>
-                  <div style={{ padding: '15px', fontWeight: 'bold', borderBottom: previewTemplate.id !== 'minimal' ? '2px solid ' + (previewTemplate.id === 'dark' ? '#334155' : '#e2e8f0') : 'none', background: previewTemplate.id === 'dark' ? 'linear-gradient(180deg, rgba(56,189,248,0.1) 0%, transparent 100%)' : 'rgba(56,189,248,0.05)', color: previewTemplate.id === 'dark' ? '#38bdf8' : '#0ea5e9' }}>Pro Model <Badge tone="info">Best</Badge></div>
-                  <div style={{ padding: '15px', fontWeight: 'bold', borderBottom: previewTemplate.id !== 'minimal' ? '2px solid ' + (previewTemplate.id === 'dark' ? '#334155' : '#e2e8f0') : 'none' }}>Elite Model</div>
-
-                  {/* Data Rows */}
-                  {[
-                    ['Price', '$19.99', '$29.99', '$49.99'],
-                    ['Rating', '★ 4.5/5', '★ 4.8/5', '★ 5.0/5'],
-                    ['Material', 'Cotton', 'Polyester', 'Silk'],
-                  ].map((row, i) => (
-                    <React.Fragment key={i}>
-                      <div style={{ padding: '15px', borderBottom: previewTemplate.id === 'enterprise' ? '1px solid #cbd5e1' : '1px solid ' + (previewTemplate.id === 'dark' ? '#1e293b' : '#f1f5f9'), textAlign: 'left', fontWeight: 'bold' }}>{row[0]}</div>
-                      <div style={{ padding: '15px', borderBottom: previewTemplate.id === 'enterprise' ? '1px solid #cbd5e1' : '1px solid ' + (previewTemplate.id === 'dark' ? '#1e293b' : '#f1f5f9') }}>{row[1]}</div>
-                      <div style={{ padding: '15px', borderBottom: previewTemplate.id === 'enterprise' ? '1px solid #cbd5e1' : '1px solid ' + (previewTemplate.id === 'dark' ? '#1e293b' : '#f1f5f9'), background: previewTemplate.id === 'dark' ? 'rgba(56,189,248,0.05)' : 'rgba(56,189,248,0.02)', fontWeight: 'bold' }}>{row[2]}</div>
-                      <div style={{ padding: '15px', borderBottom: previewTemplate.id === 'enterprise' ? '1px solid #cbd5e1' : '1px solid ' + (previewTemplate.id === 'dark' ? '#1e293b' : '#f1f5f9') }}>{row[3]}</div>
-                    </React.Fragment>
-                  ))}
-                  
-                  {/* Footer Row */}
-                  <div style={{ padding: '15px' }}></div>
-                  <div style={{ padding: '15px' }}><Button variant="primary">Add to Cart</Button></div>
-                  <div style={{ padding: '15px', background: previewTemplate.id === 'dark' ? 'rgba(56,189,248,0.05)' : 'rgba(56,189,248,0.02)' }}><Button variant="primary">Add to Cart</Button></div>
-                  <div style={{ padding: '15px' }}><Button variant="primary">Add to Cart</Button></div>
-                </div>
+              <div style={{ padding: '20px' }}>
+                <PreviewTable template={previewTemplate} />
               </div>
-
             </BlockStack>
           </Modal.Section>
         </Modal>

@@ -63,7 +63,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     }
   }
 
-  return { table, shopifyProducts };
+  return { table, shopifyProducts, plan: shopRecord.plan };
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -132,7 +132,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function EditTableWizard() {
-  const { table, shopifyProducts } = useLoaderData<typeof loader>();
+  const { table, shopifyProducts, plan } = useLoaderData<typeof loader>();
   const submit = useSubmit();
   const navigate = useNavigate();
   const actionData = useActionData<typeof action>();
@@ -268,15 +268,26 @@ export default function EditTableWizard() {
               <BlockStack gap="400">
                 <Text as="p">Choose a template for your comparison table.</Text>
                 <InlineStack gap="400">
-                  {['modern', 'minimal', 'bold'].map(tpl => (
-                    <Card key={tpl} background={selectedTemplate === tpl ? "bg-surface-active" : "bg-surface"}>
+                  {[
+                    { id: 'modern', name: 'Modern', plan: 'Free' },
+                    { id: 'minimal', name: 'Minimal', plan: 'Starter' },
+                    { id: 'dark', name: 'Dark', plan: 'Starter' },
+                    { id: 'premium', name: 'Premium', plan: 'Starter' },
+                    { id: 'enterprise', name: 'Enterprise', plan: 'Pro' }
+                  ].filter(t => {
+                    const userPlan = (plan as string) || "Free";
+                    if (userPlan.includes("Pro")) return true;
+                    if (userPlan.includes("Starter")) return t.plan !== 'Pro';
+                    return t.plan === 'Free';
+                  }).map(tpl => (
+                    <Card key={tpl.id} background={selectedTemplate === tpl.id ? "bg-surface-active" : "bg-surface"}>
                       <BlockStack gap="300" align="center">
-                        <Text as="h3" variant="headingSm">{tpl.toUpperCase()}</Text>
+                        <Text as="h3" variant="headingSm">{tpl.name}</Text>
                         <Button 
-                          variant={selectedTemplate === tpl ? "primary" : "secondary"}
-                          onClick={() => setSelectedTemplate(tpl)}
+                          variant={selectedTemplate === tpl.id ? "primary" : "secondary"}
+                          onClick={() => setSelectedTemplate(tpl.id)}
                         >
-                          {selectedTemplate === tpl ? "Selected" : "Select"}
+                          {selectedTemplate === tpl.id ? "Selected" : "Select"}
                         </Button>
                       </BlockStack>
                     </Card>

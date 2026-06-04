@@ -72,6 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
           displayValue = p.vendor || '-';
         } else if (key === 'type' || key === 'product_type') {
           displayValue = p.productType || '-';
+        } else if (key === 'description') {
+          displayValue = p.description || '-';
         } else {
           // Fallback to checkmark for custom binary attributes
           displayValue = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981"><polyline points="20 6 9 17 4 12"></polyline></svg>`;

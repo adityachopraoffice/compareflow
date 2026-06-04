@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useSubmit, useNavigate, useActionData } from "@remix-run/react";
+import { useSubmit, useNavigate, useActionData, useLoaderData } from "@remix-run/react";
 import {
   Page,
   Card,
@@ -21,8 +21,9 @@ import { authenticate } from "../shopify.server";
 import db from "../db.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
-  return null;
+  const { session } = await authenticate.admin(request);
+  const shopRecord = await db.shop.findUnique({ where: { domain: session.shop } });
+  return { plan: shopRecord?.plan || "Free" };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -83,6 +84,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function CreateTableWizard() {
+  const { plan } = useLoaderData<typeof loader>();
   const submit = useSubmit();
   const navigate = useNavigate();
   const actionData = useActionData<typeof action>();
@@ -218,15 +220,26 @@ export default function CreateTableWizard() {
               <BlockStack gap="400">
                 <Text as="p">Choose a template for your comparison table.</Text>
                 <InlineStack gap="400">
-                  {['modern', 'minimal', 'bold'].map(tpl => (
-                    <Card key={tpl} background={selectedTemplate === tpl ? "bg-surface-active" : "bg-surface"}>
+                  {[
+                    { id: 'modern', name: 'Modern', plan: 'Free' },
+                    { id: 'minimal', name: 'Minimal', plan: 'Starter' },
+                    { id: 'dark', name: 'Dark', plan: 'Starter' },
+                    { id: 'premium', name: 'Premium', plan: 'Starter' },
+                    { id: 'enterprise', name: 'Enterprise', plan: 'Pro' }
+                  ].filter(t => {
+                    const userPlan = (plan as string) || "Free";
+                    if (userPlan.includes("Pro")) return true;
+                    if (userPlan.includes("Starter")) return t.plan !== 'Pro';
+                    return t.plan === 'Free';
+                  }).map(tpl => (
+                    <Card key={tpl.id} background={selectedTemplate === tpl.id ? "bg-surface-active" : "bg-surface"}>
                       <BlockStack gap="300" align="center">
-                        <Text as="h3" variant="headingSm">{tpl.toUpperCase()}</Text>
+                        <Text as="h3" variant="headingSm">{tpl.name}</Text>
                         <Button 
-                          variant={selectedTemplate === tpl ? "primary" : "secondary"}
-                          onClick={() => setSelectedTemplate(tpl)}
+                          variant={selectedTemplate === tpl.id ? "primary" : "secondary"}
+                          onClick={() => setSelectedTemplate(tpl.id)}
                         >
-                          {selectedTemplate === tpl ? "Selected" : "Select"}
+                          {selectedTemplate === tpl.id ? "Selected" : "Select"}
                         </Button>
                       </BlockStack>
                     </Card>

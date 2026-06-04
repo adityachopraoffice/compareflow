@@ -49,6 +49,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
                 handle
                 vendor
                 productType
+                description(truncateAt: 120)
                 priceRangeV2 {
                   minVariantPrice {
                     amount
@@ -91,6 +92,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         handle: pData?.handle || "",
         vendor: pData?.vendor || "-",
         productType: pData?.productType || "-",
+        description: pData?.description || "-",
         price: formattedPrice,
         imageUrl: pData?.featuredImage?.url || ""
       };

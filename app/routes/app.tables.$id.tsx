@@ -38,7 +38,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   if (!table) throw new Response("Table not found", { status: 404 });
 
   // Get full product details from Shopify API for the selected products
-  const productIds = table.products.map(p => `gid://shopify/Product/${p.shopifyProductId}`);
+  const productIds = table.products.map(p => 
+    p.shopifyProductId.includes("gid://") ? p.shopifyProductId : `gid://shopify/Product/${p.shopifyProductId}`
+  );
   
   let shopifyProducts: any[] = [];
   if (productIds.length > 0) {

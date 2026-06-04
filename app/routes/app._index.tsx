@@ -191,6 +191,8 @@ export default function Dashboard() {
                 <Box minHeight="150px">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={viewsChart} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
+                      <XAxis dataKey="date" hide />
+                      <YAxis hide />
                       <Line type="monotone" dataKey="v" stroke="#8884d8" strokeWidth={2} dot={false} />
                       <Tooltip />
                     </LineChart>
@@ -206,8 +208,9 @@ export default function Dashboard() {
                 <Box minHeight="150px">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={topTablesChart} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
-                      <Bar dataKey="v" fill="#82ca9d" />
                       <XAxis dataKey="n" hide />
+                      <YAxis hide />
+                      <Bar dataKey="v" fill="#82ca9d" />
                       <Tooltip />
                     </BarChart>
                   </ResponsiveContainer>
@@ -222,6 +225,8 @@ export default function Dashboard() {
                 <Box minHeight="150px">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={ctrChart} margin={{ top: 5, right: 0, bottom: 5, left: 0 }}>
+                      <XAxis dataKey="date" hide />
+                      <YAxis hide />
                       <Line type="monotone" dataKey="v" stroke="#ffc658" strokeWidth={2} dot={false} />
                       <Tooltip />
                     </LineChart>

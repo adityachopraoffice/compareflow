@@ -160,26 +160,39 @@ export default function ImportProducts() {
           const lines = text.split(/\r?\n/);
           const handles: string[] = [];
           
+          let handleColIndex = 0; // default to 0
+          let headerFound = false;
+
           for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
             if (!line) continue;
             
-            // Extract the first column (basic parse)
-            // Handle both standard comma and European semicolon delimiters
-            let firstCol = line.split(/[,;]/)[0].replace(/['"]/g, '').trim();
-            if (!firstCol) continue;
+            // Split line by comma or semicolon
+            const cols = line.split(/[,;]/);
             
-            // Skip the first valid row if it is definitively a header
-            if (handles.length === 0) {
-              const lowerCol = firstCol.toLowerCase();
-              if (['handle', 'product handle', 'title', 'product title', 'id'].includes(lowerCol)) {
+            // Detect header row
+            if (!headerFound && i === 0) {
+              const headers = cols.map(h => h.replace(/['"]/g, '').trim().toLowerCase());
+              // Find which column contains "handle" (e.g. "URL handle", "Product Handle", "Handle")
+              const foundIndex = headers.findIndex(h => h.includes('handle'));
+              if (foundIndex !== -1) {
+                handleColIndex = foundIndex;
+                headerFound = true;
+                continue; // Skip the header row
+              } else if (headers.some(h => h.includes('title') || h.includes('product'))) {
+                // It's a header but no handle column found. We'll just skip it and hope first column is good.
+                headerFound = true;
                 continue;
               }
             }
             
-            // Deduplicate (important for Shopify exports where each variant gets a row)
-            if (!handles.includes(firstCol)) {
-              handles.push(firstCol);
+            // Extract the target column
+            let targetCol = cols[handleColIndex]?.replace(/['"]/g, '').trim();
+            if (!targetCol) continue;
+            
+            // Deduplicate handles
+            if (!handles.includes(targetCol)) {
+              handles.push(targetCol);
             }
           }
           

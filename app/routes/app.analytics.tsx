@@ -82,6 +82,30 @@ export default function Analytics() {
 
   return (
     <Page title="Analytics Overview">
+      {plan === "Free" ? (
+        <Layout>
+          <Layout.Section>
+            <Card>
+              <BlockStack gap="400" align="center" inlineAlign="center">
+                <div style={{ padding: '40px', textAlign: 'center' }}>
+                  <Text as="h2" variant="headingLg">Analytics is a Starter Plan feature</Text>
+                  <div style={{ margin: '16px 0' }}>
+                    <Text as="p" tone="subdued">
+                      Upgrade to the Starter Plan to unlock powerful analytics tracking. Monitor exactly how many customers view and click on your comparison tables to optimize your conversions.
+                    </Text>
+                  </div>
+                  <button 
+                    className="Polaris-Button Polaris-Button--pressable Polaris-Button--variantPrimary Polaris-Button--sizeMedium Polaris-Button--textAlignCenter" 
+                    onClick={() => navigate("/app/billing")}
+                  >
+                    <span className="Polaris-Text--root Polaris-Text--bodySm Polaris-Text--medium">Upgrade Plan</span>
+                  </button>
+                </div>
+              </BlockStack>
+            </Card>
+          </Layout.Section>
+        </Layout>
+      ) : (
       <BlockStack gap="500">
         
         {/* Top Metric Cards */}
@@ -203,6 +227,7 @@ export default function Analytics() {
         </Layout>
 
       </BlockStack>
+      )}
     </Page>
   );
 }

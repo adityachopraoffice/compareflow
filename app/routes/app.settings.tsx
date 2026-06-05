@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { json } from "@remix-run/node";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useSubmit, useActionData, useLoaderData } from "@remix-run/react";
+import { useSubmit, useActionData, useLoaderData, Link } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -177,7 +177,7 @@ export default function Settings() {
         <Layout.Section>
           <div style={{ padding: "20px 0", textAlign: "center", color: "var(--p-color-text-subdued)" }}>
             <Text as="p" variant="bodySm">
-              Need more information about how we handle your data? <a href="/app/privacy" style={{ color: "var(--p-color-text-brand)" }}>Read our Privacy Policy</a>
+              Need more information about how we handle your data? <Link to="/app/privacy" style={{ color: "var(--p-color-text-brand)" }}>Read our Privacy Policy</Link>
             </Text>
           </div>
         </Layout.Section>

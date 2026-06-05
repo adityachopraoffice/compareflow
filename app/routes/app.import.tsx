@@ -40,8 +40,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ error: "No valid product handles found." }, { status: 400 });
   }
 
-  // Construct GraphQL query to search by BOTH handle AND title, and quote the values to prevent syntax errors with spaces.
-  const queryStr = handles.map((h: string) => `(handle:"${h}") OR (title:"${h}")`).join(' OR ');
+  // Construct GraphQL query to search by BOTH handle AND title
+  // We must carefully strip double quotes from the user's input so it doesn't break the GraphQL string literal syntax.
+  const queryStr = handles.map((h: string) => {
+    const safeString = h.replace(/["\\]/g, '').trim();
+    return `(handle:"${safeString}") OR (title:"${safeString}")`;
+  }).join(' OR ');
 
   try {
     const response = await admin.graphql(
@@ -147,8 +151,8 @@ export default function ImportProducts() {
             let firstCol = line.split(',')[0].replace(/['"]/g, '').trim();
             if (!firstCol) continue;
             
-            // Skip the first row if it looks like a header
-            if (i === 0) {
+            // Skip the first valid row if it looks like a header
+            if (handles.length === 0) {
               const lowerCol = firstCol.toLowerCase();
               if (lowerCol.includes('handle') || lowerCol.includes('product') || lowerCol.includes('title')) {
                 continue;

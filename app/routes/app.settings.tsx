@@ -33,6 +33,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     template: shop.defaultTemplate || "modern",
     analyticsEnabled: shop.analyticsEnabled ?? true,
     customCSS: shop.customCSS || "",
+    plan: shop.plan || "Free",
   });
 };
 
@@ -66,6 +67,10 @@ export default function Settings() {
   const [template, setTemplate] = useState(initialData.template);
   const [analyticsEnabled, setAnalyticsEnabled] = useState(initialData.analyticsEnabled);
   const [customCSS, setCustomCSS] = useState(initialData.customCSS);
+
+  const isFree = initialData.plan === "Free";
+  const isStarter = initialData.plan === "Starter";
+  const isPro = initialData.plan === "Pro" || initialData.plan === "Enterprise";
 
   const handleSave = useCallback(() => {
     const formData = new FormData();
@@ -140,10 +145,10 @@ export default function Settings() {
                   label="Default Template"
                   options={[
                     { label: "Modern", value: "modern" },
-                    { label: "Minimal (Starter Plan)", value: "minimal" },
-                    { label: "Premium (Starter Plan)", value: "premium" },
-                    { label: "Dark (Pro Plan)", value: "dark" },
-                    { label: "Enterprise (Pro Plan)", value: "enterprise" },
+                    { label: "Minimal (Starter Plan)", value: "minimal", disabled: isFree },
+                    { label: "Premium (Starter Plan)", value: "premium", disabled: isFree },
+                    { label: "Dark (Pro Plan)", value: "dark", disabled: !isPro },
+                    { label: "Enterprise (Pro Plan)", value: "enterprise", disabled: !isPro },
                   ]}
                   value={template}
                   onChange={setTemplate}
@@ -160,18 +165,20 @@ export default function Settings() {
             <Card>
               <FormLayout>
                 <Checkbox
-                  label="Enable Internal Analytics Tracking"
+                  label={`Enable Internal Analytics Tracking${isFree ? " (Starter Plan)" : ""}`}
                   helpText="Track clicks and views for your comparison tables."
                   checked={analyticsEnabled}
                   onChange={setAnalyticsEnabled}
+                  disabled={isFree}
                 />
                 <TextField
-                  label="Global Custom CSS"
+                  label={`Global Custom CSS${!isPro ? " (Pro Plan)" : ""}`}
                   value={customCSS}
                   onChange={setCustomCSS}
                   multiline={4}
                   autoComplete="off"
                   helpText="Inject CSS to override default table styling. Applies to all tables."
+                  disabled={!isPro}
                 />
               </FormLayout>
             </Card>

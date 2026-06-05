@@ -64,7 +64,7 @@ export function PrivacyPolicyContent() {
             <BlockStack gap="400">
               <Text as="h2" variant="headingMd">Contact Us</Text>
               <Text as="p">
-                If you have questions or comments about this notice, you may email us at support@compareflow.com.
+                If you have questions or comments about this notice, you may email us at aditya@salesvision.shop.
               </Text>
             </BlockStack>
           </Card>

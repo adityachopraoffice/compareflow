@@ -171,7 +171,7 @@ export default function ImportProducts() {
             const cols = line.split(/[,;]/);
             
             // Detect header row
-            if (!headerFound && i === 0) {
+            if (!headerFound) {
               const headers = cols.map(h => h.replace(/['"]/g, '').trim().toLowerCase());
               // Find which column contains "handle" (e.g. "URL handle", "Product Handle", "Handle")
               const foundIndex = headers.findIndex(h => h.includes('handle'));
@@ -184,6 +184,8 @@ export default function ImportProducts() {
                 headerFound = true;
                 continue;
               }
+              // If we reached here, it didn't look like a header at all. We just treat it as data.
+              headerFound = true; 
             }
             
             // Extract the target column

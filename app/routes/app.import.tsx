@@ -66,7 +66,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const response = await admin.graphql(
       `query getProductsByHandle($query: String!) {
-        products(first: 50, query: $query) {
+        products(first: 100, query: $query) {
           nodes {
             id
             title
@@ -165,22 +165,26 @@ export default function ImportProducts() {
             if (!line) continue;
             
             // Extract the first column (basic parse)
-            let firstCol = line.split(',')[0].replace(/['"]/g, '').trim();
+            // Handle both standard comma and European semicolon delimiters
+            let firstCol = line.split(/[,;]/)[0].replace(/['"]/g, '').trim();
             if (!firstCol) continue;
             
-            // Skip the first valid row if it looks like a header
+            // Skip the first valid row if it is definitively a header
             if (handles.length === 0) {
               const lowerCol = firstCol.toLowerCase();
-              if (lowerCol.includes('handle') || lowerCol.includes('product') || lowerCol.includes('title')) {
+              if (['handle', 'product handle', 'title', 'product title', 'id'].includes(lowerCol)) {
                 continue;
               }
             }
             
-            handles.push(firstCol);
+            // Deduplicate (important for Shopify exports where each variant gets a row)
+            if (!handles.includes(firstCol)) {
+              handles.push(firstCol);
+            }
           }
           
-          if (handles.length > 50) {
-            setError("You can only import up to 50 products at a time.");
+          if (handles.length > 100) {
+            setError("You can only import up to 100 unique products at a time.");
             setParsedHandles([]);
           } else if (handles.length === 0) {
             setError("No valid handles found in the CSV.");

@@ -34,6 +34,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const shopRecord = await db.shop.findUnique({ where: { domain: shop } });
   if (!shopRecord) return { error: "Shop not found" };
 
+  const tableCount = await db.comparisonTable.count({ where: { shopId: shopRecord.id } });
+  if (shopRecord.plan === "Free" && tableCount >= 1) {
+    return { error: "You have reached the limit of 1 table on the Free plan. Please upgrade to Starter for unlimited tables!" };
+  }
+
   try {
     const name = formData.get("name") as string || "New Comparison Table";
     const selectedProducts = JSON.parse(formData.get("products") as string);

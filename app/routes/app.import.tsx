@@ -44,6 +44,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ error: "Shop not found." }, { status: 404 });
   }
 
+  const tableCount = await db.comparisonTable.count({ where: { shopId: shopRecord.id } });
+  if (shopRecord.plan === "Free" && tableCount >= 1) {
+    return json({ error: "You have reached the limit of 1 table on the Free plan. Please upgrade to Starter for unlimited tables!" }, { status: 403 });
+  }
+
   const formData = await request.formData();
   const handlesRaw = formData.get("handles");
   

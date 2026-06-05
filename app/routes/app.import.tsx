@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { json, redirect } from "@remix-run/node";
-import type { ActionFunctionArgs } from "@remix-run/node";
-import { useSubmit, useActionData, useNavigation } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { useSubmit, useActionData, useNavigation, useLoaderData } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -19,6 +19,22 @@ import {
 import { NoteIcon } from "@shopify/polaris-icons";
 import { authenticate } from "../shopify.server";
 import db from "../db.server";
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { admin } = await authenticate.admin(request);
+  let templateHandles = ["example-product-1", "example-product-2"];
+  try {
+    const response = await admin.graphql(`query { products(first: 3) { nodes { handle } } }`);
+    const responseJson = await response.json();
+    const handles = responseJson.data?.products?.nodes?.map((n: any) => n.handle);
+    if (handles && handles.length > 0) {
+      templateHandles = handles;
+    }
+  } catch (error) {
+    console.error("Failed to fetch template handles", error);
+  }
+  return json({ templateHandles });
+};
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const { admin, session } = await authenticate.admin(request);
@@ -118,6 +134,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function ImportProducts() {
+  const { templateHandles } = useLoaderData<typeof loader>();
   const [file, setFile] = useState<File | null>(null);
   const [parsedHandles, setParsedHandles] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -179,7 +196,7 @@ export default function ImportProducts() {
   );
 
   const downloadTemplate = () => {
-    const csvContent = "data:text/csv;charset=utf-8,Product Handle\nburton-custom-snowboard\nburton-custom-freestyle\n";
+    const csvContent = "data:text/csv;charset=utf-8,Product Handle\n" + templateHandles.join("\n") + "\n";
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);

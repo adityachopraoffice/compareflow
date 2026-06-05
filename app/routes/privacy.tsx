@@ -5,11 +5,16 @@ import {
   BlockStack,
   Text,
   List,
+  AppProvider,
 } from "@shopify/polaris";
+import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
+
+export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
 export default function PrivacyPolicy() {
   return (
-    <Page title="Privacy Policy" backAction={{ content: "Dashboard", url: "/app" }}>
+    <AppProvider i18n={{}}>
+      <Page title="Privacy Policy">
       <Layout>
         <Layout.Section>
           <BlockStack gap="500">
@@ -74,5 +79,6 @@ export default function PrivacyPolicy() {
         </Layout.Section>
       </Layout>
     </Page>
+    </AppProvider>
   );
 }

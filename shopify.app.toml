@@ -2,7 +2,7 @@
 
 client_id = "14f2c5b416cc97de1f341a5454b9c0bb"
 name = "CompareFlow"
-application_url = "https://compareflow-mu.vercel.app"
+application_url = "https://compareflow.salesvision.shop"
 embedded = true
 
 [build]
@@ -39,12 +39,12 @@ api_version = "2026-07"
 scopes = "read_products,write_products,read_themes,write_script_tags"
 
 [app_proxy]
-url = "https://compareflow-mu.vercel.app/api"
+url = "https://compareflow.salesvision.shop/api"
 subpath = "compareflow"
 prefix = "apps"
 
 [auth]
 redirect_urls = [ 
-  "https://compareflow-mu.vercel.app/auth/callback",
-  "https://compareflow-mu.vercel.app/auth/shopify/callback"
+  "https://compareflow.salesvision.shop/auth/callback",
+  "https://compareflow.salesvision.shop/auth/shopify/callback"
 ]

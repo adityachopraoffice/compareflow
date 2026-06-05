@@ -31,14 +31,23 @@ model Session {
 }
 
 model Shop {
-  id            String             @id @default(cuid())
-  domain        String             @unique
-  accessToken   String?
-  plan          String             @default("Free")
-  installedAt   DateTime           @default(now())
-  tables        ComparisonTable[]
-  events        AnalyticsEvent[]
-  subscriptions Subscription[]
+  id               String             @id @default(cuid())
+  domain           String             @unique
+  accessToken      String?
+  plan             String             @default("Free")
+  installedAt      DateTime           @default(now())
+  
+  // Settings
+  namePattern      String?            @default("Comparison - {{date}}")
+  language         String?            @default("en")
+  accentColor      String?            @default("#008060")
+  defaultTemplate  String?            @default("modern")
+  analyticsEnabled Boolean?           @default(true)
+  customCSS        String?
+
+  tables           ComparisonTable[]
+  events           AnalyticsEvent[]
+  subscriptions    Subscription[]
 }
 
 model ComparisonTable {

@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
+import { json } from "@remix-run/node";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useSubmit, useActionData } from "@remix-run/react";
+import { useSubmit, useActionData, useLoaderData } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -11,33 +12,60 @@ import {
   Select,
   Checkbox,
   PageActions,
+  Text,
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
+import db from "../db.server";
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
-  return null;
+  const { session } = await authenticate.admin(request);
+  const shop = await db.shop.findUnique({ where: { domain: session.shop } });
+  
+  if (!shop) {
+    throw new Error("Shop not found");
+  }
+
+  return json({
+    namePattern: shop.namePattern || "Comparison - {{date}}",
+    language: shop.language || "en",
+    accentColor: shop.accentColor || "#008060",
+    template: shop.defaultTemplate || "modern",
+    analyticsEnabled: shop.analyticsEnabled ?? true,
+    customCSS: shop.customCSS || "",
+  });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
   const formData = await request.formData();
   
-  // Here we would normally save to db.shop.update(...)
-  // Mocking success for now
-  return { success: true, timestamp: Date.now() };
+  await db.shop.update({
+    where: { domain: session.shop },
+    data: {
+      namePattern: formData.get("namePattern")?.toString() || "Comparison - {{date}}",
+      language: formData.get("language")?.toString() || "en",
+      accentColor: formData.get("accentColor")?.toString() || "#008060",
+      defaultTemplate: formData.get("template")?.toString() || "modern",
+      analyticsEnabled: formData.get("analyticsEnabled")?.toString() === "true",
+      customCSS: formData.get("customCSS")?.toString() || "",
+    }
+  });
+
+  return json({ success: true, timestamp: Date.now() });
 };
 
 export default function Settings() {
+  const initialData = useLoaderData<typeof loader>();
   const submit = useSubmit();
   const actionData = useActionData<typeof action>();
 
-  const [namePattern, setNamePattern] = useState("Comparison - {{date}}");
-  const [language, setLanguage] = useState("en");
-  const [accentColor, setAccentColor] = useState("#008060");
-  const [template, setTemplate] = useState("modern");
-  const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
-  const [customCSS, setCustomCSS] = useState("");
+  const [namePattern, setNamePattern] = useState(initialData.namePattern);
+  const [language, setLanguage] = useState(initialData.language);
+  const [accentColor, setAccentColor] = useState(initialData.accentColor);
+  const [template, setTemplate] = useState(initialData.template);
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(initialData.analyticsEnabled);
+  const [customCSS, setCustomCSS] = useState(initialData.customCSS);
 
   const handleSave = useCallback(() => {
     const formData = new FormData();
@@ -145,6 +173,14 @@ export default function Settings() {
             </Card>
           </Layout.AnnotatedSection>
         </Layout>
+
+        <Layout.Section>
+          <div style={{ padding: "20px 0", textAlign: "center", color: "var(--p-color-text-subdued)" }}>
+            <Text as="p" variant="bodySm">
+              Need more information about how we handle your data? <a href="/app/privacy" style={{ color: "var(--p-color-text-brand)" }}>Read our Privacy Policy</a>
+            </Text>
+          </div>
+        </Layout.Section>
 
         <PageActions
           primaryAction={{

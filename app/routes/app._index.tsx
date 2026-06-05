@@ -164,7 +164,7 @@ export default function Dashboard() {
                     <Icon source={PlusIcon} tone="success" />
                     <Text as="span" fontWeight="semibold">Create New Table</Text>
                   </div>
-                  <div className="bento-tile">
+                  <div className="bento-tile" onClick={() => navigate("/app/import")}>
                     <Icon source={ImportIcon} tone="success" />
                     <Text as="span" fontWeight="semibold">Import Products</Text>
                   </div>

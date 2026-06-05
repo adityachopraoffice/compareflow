@@ -40,9 +40,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ error: "No valid product handles found." }, { status: 400 });
   }
 
-  // Construct GraphQL query
-  // "handle:a OR handle:b OR ..."
-  const queryStr = handles.map((h: string) => `handle:${h}`).join(' OR ');
+  // Construct GraphQL query to search by BOTH handle AND title, and quote the values to prevent syntax errors with spaces.
+  const queryStr = handles.map((h: string) => `(handle:"${h}") OR (title:"${h}")`).join(' OR ');
 
   try {
     const response = await admin.graphql(
@@ -144,14 +143,19 @@ export default function ImportProducts() {
             const line = lines[i].trim();
             if (!line) continue;
             
-            // Skip a header row if it exists and looks like 'handle' or 'product'
-            if (i === 0 && line.toLowerCase().includes('handle')) continue;
+            // Extract the first column (basic parse)
+            let firstCol = line.split(',')[0].replace(/['"]/g, '').trim();
+            if (!firstCol) continue;
             
-            // Extract the first column
-            const firstCol = line.split(',')[0].replace(/['"]/g, '').trim();
-            if (firstCol) {
-              handles.push(firstCol);
+            // Skip the first row if it looks like a header
+            if (i === 0) {
+              const lowerCol = firstCol.toLowerCase();
+              if (lowerCol.includes('handle') || lowerCol.includes('product') || lowerCol.includes('title')) {
+                continue;
+              }
             }
+            
+            handles.push(firstCol);
           }
           
           if (handles.length > 50) {

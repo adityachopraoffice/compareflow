@@ -86,7 +86,11 @@ export default function Settings() {
   }, [actionData]);
 
   return (
-    <Page title="Settings">
+    <Page>
+      <ui-title-bar title="Settings">
+        <button variant="primary" onClick={handleSave}>Save Settings</button>
+      </ui-title-bar>
+      
       <BlockStack gap="500">
         <Layout>
           {/* General Preferences */}
@@ -136,7 +140,7 @@ export default function Settings() {
                   label="Default Template"
                   options={[
                     { label: "Modern", value: "modern" },
-                    { label: "Minimal", value: "minimal" },
+                    { label: "Minimal (Starter Plan)", value: "minimal" },
                     { label: "Premium (Starter Plan)", value: "premium" },
                     { label: "Dark (Pro Plan)", value: "dark" },
                     { label: "Enterprise (Pro Plan)", value: "enterprise" },
@@ -181,13 +185,6 @@ export default function Settings() {
             </Text>
           </div>
         </Layout.Section>
-
-        <PageActions
-          primaryAction={{
-            content: "Save Settings",
-            onAction: handleSave,
-          }}
-        />
       </BlockStack>
     </Page>
   );

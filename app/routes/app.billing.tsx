@@ -11,7 +11,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const billingCheck = await billing.check({
     // @ts-ignore
     plans: [STARTER_PLAN, PRO_PLAN],
-    isTest: true,
+    isTest: false,
   });
 
   const hasPro = billingCheck.appSubscriptions.some(sub => sub.name === PRO_PLAN);
@@ -42,11 +42,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const billingCheck = await billing.require({
       // @ts-ignore
       plans: [targetPlan],
-      isTest: true,
+      isTest: false,
       onFailure: async () => billing.request({
         // @ts-ignore
         plan: targetPlan,
-        isTest: true,
+        isTest: false,
         returnUrl: `https://admin.shopify.com/store/${session.shop.split('.')[0]}/apps/compareflow/app/billing`,
       }),
     });
@@ -54,7 +54,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const billingCheck = await billing.require({
       // @ts-ignore
       plans: [STARTER_PLAN, PRO_PLAN],
-      isTest: true,
+      isTest: false,
       onFailure: async () => {
         return new Response(null, { status: 200 }); // Handle already free
       }
@@ -64,7 +64,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const subscription = billingCheck.appSubscriptions[0];
       await billing.cancel({
         subscriptionId: subscription.id,
-        isTest: true,
+        isTest: false,
         prorate: true,
       });
     }

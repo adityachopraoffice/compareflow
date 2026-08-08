@@ -17,7 +17,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const billingCheck = await billing.check({
     // @ts-ignore
     plans: [STARTER_PLAN, PRO_PLAN],
-    isTest: true,
+    isTest: false,
   });
 
   const hasPro = billingCheck.appSubscriptions.some(sub => sub.name === PRO_PLAN);

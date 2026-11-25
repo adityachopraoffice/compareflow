@@ -2,7 +2,7 @@
 
 client_id = "14f2c5b416cc97de1f341a5454b9c0bb"
 name = "CompareFlow"
-application_url = "https://compareflow.salesvision.shop"
+application_url = "https://compareflow-mu.vercel.app"
 embedded = true
 
 [build]

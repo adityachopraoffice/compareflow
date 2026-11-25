@@ -39,17 +39,17 @@ api_version = "2026-07"
 scopes = "read_products,write_products,read_themes,write_script_tags"
 
 [webhooks.privacy_compliance]
-customer_deletion_url = "https://compareflow.salesvision.shop/webhooks/customers/redact"
-customer_data_request_url = "https://compareflow.salesvision.shop/webhooks/customers/data_request"
-shop_deletion_url = "https://compareflow.salesvision.shop/webhooks/shop/redact"
+customer_deletion_url = "https://compareflow-mu.vercel.app/webhooks/customers/redact"
+customer_data_request_url = "https://compareflow-mu.vercel.app/webhooks/customers/data_request"
+shop_deletion_url = "https://compareflow-mu.vercel.app/webhooks/shop/redact"
 
 [app_proxy]
-url = "https://compareflow.salesvision.shop/api"
+url = "https://compareflow-mu.vercel.app/api"
 subpath = "compareflow"
 prefix = "apps"
 
 [auth]
 redirect_urls = [ 
-  "https://compareflow.salesvision.shop/auth/callback",
-  "https://compareflow.salesvision.shop/auth/shopify/callback"
+  "https://compareflow-mu.vercel.app/auth/callback",
+  "https://compareflow-mu.vercel.app/auth/shopify/callback"
 ]
